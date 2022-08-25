@@ -1,0 +1,54 @@
+@use "../../scss/" as *;
+
+.seat-container__list {
+  @include flex(center, center);
+  margin: 10px 0;
+
+  @include mobile {
+    display: none;
+  }
+
+  &__item {
+    @include flex(center, center);
+   
+    &.reverse {
+      flex-direction: row-reverse;
+    }
+  }
+
+  &__space {
+    width: 30px;
+    text-align: center;
+    font-weight: 700;
+
+    @include tablet {
+      width: 15px;
+    }
+  }
+}
+
+.seat__row {
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  border: 1px solid;
+  margin-right: 1px;
+  cursor: pointer;
+
+  &.activeSeat {
+    background-color: #008000;
+    color: $txt-white;
+  }
+
+  @include tablet-desktop {
+    width: 22px;
+    height: 22px;
+    font-size: 1rem;
+  }
+
+  @include tablet {
+    width: 15px;
+    height: 15px;
+    font-size: 0.6rem;
+  }
+}

@@ -1,0 +1,1 @@
+export {default as bg} from './ctu_bg.png'

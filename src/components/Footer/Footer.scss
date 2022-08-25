@@ -1,0 +1,80 @@
+@use "../../scss/" as *;
+
+.footer {
+  @include flex(center, space-between);
+  background-color: $second-color;
+  height: 60px;
+  border-top: 4px solid $main-color;
+  &__contact {
+    @include flex(center, center);
+
+    &__item {
+      margin: 10px;
+
+      svg {
+        color: $txt-gray;
+        font-size: 1.7rem;
+        margin-right: 5px;
+      }
+
+      a {
+        text-decoration: none;
+        color: $main-color;
+      }
+    }
+  }
+
+  &__icon {
+    &__list {
+      @include flex(center, center);
+      padding: unset;
+      margin: unset;
+      margin-right: 10px;
+
+      &__item {
+        margin: 5px;
+        width: 25px;
+        height: 25px;
+        background-color: $txt-white;
+        cursor: pointer;
+        border-radius: 2px;
+
+        svg {
+          width: 100%;
+          height: 100%;
+          padding: 2px;
+          color: #00acec;
+        }
+
+        &:hover:nth-child(1) {
+          background-color: #1c57a5;
+
+          svg {
+            color: $txt-white;
+          }
+        }
+        &:hover:nth-child(2) {
+          background-color: rgb(90, 124, 173);
+
+          svg {
+            color: $txt-white;
+          }
+        }
+        &:hover:nth-child(3) {
+          background-color: red;
+
+          svg {
+            color: $txt-white;
+          }
+        }
+        &:hover:nth-child(4) {
+          background-color: rgb(52, 86, 126);
+          
+          svg {
+            color: $txt-white;
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,44 @@
+@use "../../scss/" as *;
+
+.sort-seat {
+  @include flex(center, center);
+
+  &__main {
+    @include flex(center, center);
+    &__list {
+        @include flex(center, center);
+        padding: unset;
+        flex: 1;
+
+        li {
+            width: 35%;
+            height: 200px;
+            border: 1px solid $main-color;
+            margin: 10px;
+            padding: 3px;
+
+            p {
+                margin-bottom: unset;
+            }
+        }
+    }
+
+    &__list.reverse {
+        flex-direction: row-reverse;
+    }
+
+    &__space{
+        width: 1%;
+    }
+
+  }
+
+  &__control {
+    @include flex(center,space-evenly);
+    margin: 20px 0;
+
+    svg {
+        font-size: 1.5rem;
+    }
+  }
+}
