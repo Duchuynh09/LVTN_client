@@ -19,10 +19,15 @@ function SeatList({ Array, nameArray = "" }) {
       <div className={cx("seat-container__list__item", "reverse")}>
         {/* eslint-disable-next-line array-callback-return */}
         {tmpArray.map((item, i) => {
+          let empty = undefined
+          if(!item) {
+            empty = 'empty'
+          } // nếu item = undefine thì cho nó class là empty
+
           let index = i + 1;
           if (index % 2 > 0 && index < Array[0]) {
             return (
-              <div id={item} className={cx("seat__row")} key={index}>
+              <div id={item} className={cx("seat__row",empty)} key={index}>
                 <span className={cx("seat__row__item")} name={nameArray+index}>
                   {index}
                 </span>
@@ -35,10 +40,15 @@ function SeatList({ Array, nameArray = "" }) {
       <div className={cx("seat-container__list__item")}>
         {/* eslint-disable-next-line array-callback-return */}
         {tmpArray.map((item, i) => {
+          let empty = undefined
+          if(!item) {
+            empty = 'empty'
+          } // nếu item = undefine thì cho nó class là empty
+          
           let index = i + 1;
           if (index % 2 === 0) {
             return (
-              <div id={item} className={cx("seat__row")} key={index}>
+              <div id={item} className={cx("seat__row",empty)} key={index}>
                 <span
                   className={cx("seat__row__item")}
                   name={`${nameArray}${index}`}

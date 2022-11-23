@@ -5,7 +5,9 @@ import { useContext } from "react";
 
 import DataContext from "../../store/DataContext";
 import ModalConText from "../../store/ModalContext";
+import sendMailApi from "../../api/sendMailApi";
 import style from "./RegisterSeat.scss";
+// import sendMailApi from "../../api/sendMailApi";
 
 const cx = classnames.bind(style);
 
@@ -30,23 +32,37 @@ function RegisterSeat() {
       );
       ModalConTextt.setType("danger");
     } else {
-      let dataClient ={
-        mssv: data.mssv.toUpperCase(),
-        ten: data.name,
-        lop: data.class.toUpperCase(),
-        nghanh: data.major.toUpperCase(),
-        maDonVi: isSuccess.donvi,
-      };
-      if (DataContextt.checkAlready(dataClient.mssv)) {
+      if (DataContextt.checkAlready(data.mssv)) {
         ModalConTextt.setShow(true);
         ModalConTextt.setMess("Bạn đã đăng kí rồi!");
         ModalConTextt.setType("info");
       } else {
+        let dataClient = {
+          mssv: data.mssv.toUpperCase(),
+          email: data.email,
+          ten: data.name,
+          lop: data.class.toUpperCase(),
+          nghanh: data.major.toUpperCase(),
+          maDonVi: isSuccess.donvi,
+        };
+
         DataContextt.setClientData(dataClient);
+        DataContextt.setCallApi(!DataContextt.callApi);
+        DataContextt.setTypeSort({ type: "mssv", atoZ: true });
 
         ModalConTextt.setShow(true);
         ModalConTextt.setMess("Đăng kí dự lễ tốt nghiệp thành công!");
         ModalConTextt.setType("success");
+
+        const sendMai = async () => {
+          try {
+            await sendMailApi.sendMail(dataClient);
+          } catch (error) {
+            console.log(error);
+          }
+        };
+
+        sendMai();
       }
     }
   };
@@ -61,7 +77,7 @@ function RegisterSeat() {
             onSubmit={handleSubmit(submit)}
             className={cx("form-container__main")}
           >
-            <Form.Group className="mb-3" controlId="formBasicEmail">
+            <Form.Group className="mb-3" controlId="formBasicMssv">
               <Form.Control
                 type="text"
                 name="mssv"
@@ -74,7 +90,7 @@ function RegisterSeat() {
               )}
             </Form.Group>
 
-            <Form.Group className="mb-3" controlId="formBasicEmail">
+            <Form.Group className="mb-3" controlId="formBasicName">
               <Form.Control
                 type="text"
                 name="name"
@@ -90,17 +106,23 @@ function RegisterSeat() {
             <Form.Group className="mb-3" controlId="formBasicEmail">
               <Form.Control
                 type="text"
-                name="phone"
-                placeholder="Số điện thoại"
+                name="email"
+                placeholder="Email"
                 spellCheck={false}
-                {...register("phone", { required: true })}
+                {...register("email", {
+                  required: true,
+                  pattern: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                })}
               />
-              {errors.phone?.type === "required" && (
-                <p className="text-danger">Vui lòng nhập số điện thoại</p>
+              {errors.email?.type === "required" && (
+                <p className="text-danger">Vui lòng nhập email</p>
+              )}
+              {errors.email?.type === "pattern" && (
+                <p className="text-danger">Vui lòng kiểm tra lại email</p>
               )}
             </Form.Group>
 
-            <Form.Group className="mb-3" controlId="formBasicEmail">
+            <Form.Group className="mb-3" controlId="formBasicClass">
               <Form.Control
                 type="text"
                 name="class"
@@ -113,7 +135,7 @@ function RegisterSeat() {
               )}
             </Form.Group>
 
-            <Form.Group className="mb-3" controlId="formBasicEmail">
+            <Form.Group className="mb-3" controlId="formBasicMajor">
               <Form.Control
                 type="text"
                 name="major"

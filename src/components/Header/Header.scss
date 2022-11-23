@@ -10,6 +10,11 @@
     height: 90px;
     width: 347px;
 
+    @include mobile {
+      height: 50px;
+      width: 200px;
+    }
+
     img {
       width: 100%;
       height: 100%;
@@ -26,6 +31,10 @@
         @include flex(center, center);
         font-size: 1.5rem;
 
+        @include mobile {
+          display: none;
+        }
+
         & > * {
           width: 30%;
           margin: 0 5px;
@@ -39,11 +48,21 @@
         font-size: 1.5rem;
         color: $main-color;
         cursor: pointer;
+
+        @include mobile {
+          font-size: 0.6rem;
+          font-weight: 600;
+        }
       }
 
       &__avt {
         width: 80px;
         height: 80px;
+
+        @include mobile {
+          width: 30px;
+          height: 30px;
+        }
       }
     }
   }
@@ -55,33 +74,82 @@
   color: $txt-white;
   height: $nav-height;
 
+  @include mobile {
+    height: 20px;
+  }
+
   &__list {
     @include flex(center, center);
     padding: unset;
     margin: unset;
     height: 100%;
-    li {
+
+    &__item {
       @include flex(center, center);
+      position: relative;
+      font-size: 1rem;
+      cursor: pointer;
+      height: 100%;
+      text-align: center;
+      z-index: 9;
+
+      @include mobile {
+        font-size: 0.5rem;
+        padding: 0 6px;
+      }
+
+      &.tienIch,
+      &.language {
+        padding: 0 18px;
+      }
 
       a {
         @include flex(center, center);
         width: 100%;
+        padding: 0 18px;
         height: 100%;
-        color: $txt-white;
+        color: $txt-white !important;
       }
-
-      font-size: 1rem;
-      cursor: pointer;
-      height: 100%;
-      padding: 0 18px;
-      text-align: center;
 
       &:hover {
         background-color: $second-color;
       }
+
+      &__tienIch {
+        width: 170px;
+        height: 120px;
+        top: 0;
+        transform: translateY(5px);
+        background-color: $txt-white;
+        color: $txt-main-color;
+        padding: 10px;
+        border-bottom: 4px solid $main-color;
+
+        button {
+          margin: 5px 0;
+          width: 100%;
+        }
+      }
     }
 
-    li.active {
+    @keyframes toRight {
+      from {
+        transform: translateX(-100%);
+      }
+      to {
+        transform: translateX(0);
+      }
+    }
+    .tienIch {
+      z-index: 8;
+      display: none;
+      animation: toRight 0.5s ease;
+    }
+    .tienIch.activeTienIch {
+      display: flex;
+    }
+
+    &__item.active {
       background-color: $main-color;
     }
   }
@@ -93,10 +161,20 @@
     position: relative;
     z-index: 99;
 
+    @include mobile {
+      width: 20px;
+      height: 20px;
+    }
+
     &:hover &__box {
       opacity: 1;
       width: 200px;
       background-color: #4e585d;
+
+      @include mobile {
+        width: 80px;
+        font-size: 0.5rem;
+      }
     }
 
     &__box::placeholder {
@@ -125,6 +203,53 @@
       height: 100%;
       padding: 12px;
       cursor: pointer;
+
+      @include mobile {
+        padding: 4px;
+      }
     }
+  }
+}
+
+.user_name {
+  max-width: 170px;
+  display: block;
+  display: -webkit-box;
+  font-size: 16px;
+  line-height: 1.3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.userOption {
+  background-color: $main-bg;
+  width: 180px;
+  border: 1px solid $txt-gray;
+
+  &__item {
+    margin-bottom: 5px;
+    padding: 5px;
+
+    p {
+      cursor: pointer;
+      margin-bottom: unset;
+    }
+
+    p:hover {
+      background-color: $txt-gray;
+    }
+
+    svg {
+      vertical-align: middle;
+      font-size: 1.4rem;
+      width: 25px;
+    }
+
+  }
+
+  &__item__border {
+    border-top: 1px solid $txt-gray;
+    border-bottom: 1px solid $txt-gray;
   }
 }

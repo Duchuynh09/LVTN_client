@@ -1,0 +1,23 @@
+@use "../../scss/" as *;
+
+.seat-container {
+  @include mobile {
+    display: none;
+  }
+}
+
+.map-mobile {
+  display: none;
+
+  @include mobile {
+    display: block;
+    width: 100%;
+    height: 200px;
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+  }
+}

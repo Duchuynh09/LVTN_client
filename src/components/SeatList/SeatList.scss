@@ -10,7 +10,7 @@
 
   &__item {
     @include flex(center, center);
-   
+
     &.reverse {
       flex-direction: row-reverse;
     }
@@ -36,8 +36,9 @@
   cursor: pointer;
 
   &.activeSeat {
-    background-color: #008000;
-    color: $txt-white;
+    background-color: #008000 !important;
+    color: $txt-white ;
+    border: 1px solid #008000;
   }
 
   @include tablet-desktop {

@@ -21,7 +21,7 @@ function DataProvider({ children }) {
     let check = dssvDaDangKy.find((item) => {
       return item.mssv === mssv;
     });
-    
+
     setCallApi(!callApi); // set state nay thay doi khi goi ham check -> goi api lai de kiem tra
     return check;
   };
@@ -54,8 +54,8 @@ function DataProvider({ children }) {
       createDsApi();
     }
   }, [clientData]);
-  useEffect(() => {
   
+  useEffect(() => {
     if (typeSort.type === "mssv") {
       sortMssv(dssvDaDangKy);
     } else if (typeSort.type === "class") {
@@ -199,6 +199,8 @@ function DataProvider({ children }) {
         setTypeSort,
         checkMssv,
         setClientData,
+        setCallApi,
+        callApi
       }}
     >
       {children}
