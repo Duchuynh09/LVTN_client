@@ -38,6 +38,10 @@ function Register() {
           ModalContextt.setType("success");
           ModalContextt.setShow(!ModalContextt.show);
           next("/");
+        }else {
+          ModalContextt.setMess(`Tài khoản đã tồn tại!`);
+          ModalContextt.setType("danger");
+          ModalContextt.setShow(!ModalContextt.show);
         }
       };
       callApi();

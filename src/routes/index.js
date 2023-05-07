@@ -6,7 +6,13 @@ const routes = {
     register:'/register',
     registerSeat:'/registerSeat',
     sortSeat:'/sortSeat',
-    updateGraList:'/updateGraList'
+    updateGraList:'/updateGraList',
+    eventManager:'/eventManager',
+    createEvent:'/createEvent',
+    userEventManager:'/userEventManager',
+    userManager:'/userManager',
+    feedBack:'/feedBack'
+
 }
 
 export default routes

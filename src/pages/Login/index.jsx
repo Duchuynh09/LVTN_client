@@ -1,12 +1,14 @@
 import { Container, Form, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useParams, useNavigate } from "react-router-dom";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import classnames from "classnames/bind";
 
 import signInApi from "../../api/signInApi";
 import style from "./Login.scss";
 import ModalContext from "../../store/ModalContext";
+import DataContext from "../../store/DataContext";
+
 const cx = classnames.bind(style);
 
 function Login() {
@@ -15,8 +17,7 @@ function Login() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const ModalContextt = useContext(ModalContext);
-
-
+  const DataContextt = useContext(DataContext);
 
 
   const handleSignIn = async () => {
@@ -29,6 +30,9 @@ function Login() {
           });
           if (check.state === "success") {
             localStorage.setItem("user", JSON.stringify(check.user));
+            localStorage.setItem("token", JSON.stringify(check.token));
+            document.cookie = `token = ${JSON.stringify(check.token)}`;
+            DataContextt.setIsAdmin(true)
             navigate("/home");
           } else {
             ModalContextt.setShow(true);
@@ -47,8 +51,11 @@ function Login() {
           email,
           password,
         });
+
         if (check.state === "success") {
           localStorage.setItem("user", JSON.stringify(check.user));
+          document.cookie = `token = ${JSON.stringify(check.token)}`;
+          localStorage.setItem("token", JSON.stringify(check.token));
           navigate("/home");
         } else {
           ModalContextt.setShow(true);
@@ -96,7 +103,7 @@ function Login() {
             <p className="text-center m-2">Hoặc</p>
             <Button
               variant="outline-primary"
-              type="submit"
+          
               className={cx("register", "w-100")}
             >
               <Link to={"/register"}>Đăng ký ngay</Link>

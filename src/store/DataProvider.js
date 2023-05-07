@@ -1,25 +1,33 @@
 import { useState, useEffect } from "react";
 import DataContext from "./DataContext";
-import svApi from "../api/svApi";
+import eventApi from "../api/eventApi";
 
 function DataProvider({ children }) {
   const [data, setData] = useState([]); // dữ liệu trả về ra giao diện
   const [dssvCoTheDangKy, setDssvCoTheDangKy] = useState([]); // dữ liệu tạm thời để kiểm tra
   const [dssvDaDangKy, setDssvDaDangKy] = useState([]); // dssv sau cuối
-  const [typeSort, setTypeSort] = useState({ type: "mssv", atoZ: true });
   const [clientData, setClientData] = useState();
   const [callApi, setCallApi] = useState(false);
+  const [idEvent, setIdEvent] = useState();
+  const [specialSeat, setSpecialSeat] = useState([]);
+
+  const [isAdmin,setIsAdmin] = useState(false)
 
   const checkMssv = (mssv) => {
-    let isSuccess = dssvCoTheDangKy.find((item) => {
-      return item.mssv === mssv;
-    });
-    return isSuccess;
+    // console.log(dssvCoTheDangKy);
+    if (dssvCoTheDangKy !== "all") {
+      let isSuccess = dssvCoTheDangKy?.find((item) => {
+        return item.mssv.toUpperCase() === mssv.toUpperCase();
+      });
+      return isSuccess;
+    } else {
+      return true;
+    }
   };
 
   const checkAlready = (mssv) => {
-    let check = dssvDaDangKy.find((item) => {
-      return item.mssv === mssv;
+    const check = dssvDaDangKy?.find((item) => {
+      return item.mssv.toUpperCase() === mssv.toUpperCase();
     });
 
     setCallApi(!callApi); // set state nay thay doi khi goi ham check -> goi api lai de kiem tra
@@ -27,26 +35,36 @@ function DataProvider({ children }) {
   };
 
   useEffect(() => {
-    const fetchSvApi = async () => {
-      const respone = await svApi.getDssvCoTheDangKy();
-      setDssvCoTheDangKy(respone);
+    const fetchEventApi = async () => {
+      const respone = await eventApi.getDssvCoTheDangKy(idEvent);
+      const respone2 = await eventApi.getDssvDaDangKy(idEvent);
+
+      setDssvCoTheDangKy(respone.data);
+      setDssvDaDangKy(respone2.data);
+      setSpecialSeat(respone2.specialSeat);
+      setData(respone2.data);
     };
-    fetchSvApi();
-  }, []);
+    fetchEventApi();
+  }, [idEvent]);
 
   useEffect(() => {
-    const fetchSvApi = async () => {
-      const respone = await svApi.getDssvDaDangKy();
-      setDssvDaDangKy(respone);
+    const fetchEventApi = async () => {
+      const respone = await eventApi.getEvents();
+      // lay ds sv dang ky cua su kien dau tien de hien thi dau tien
+      if (respone.data) {
+        setData(respone?.data[0]?.dsDaDangKy);
+        setSpecialSeat(respone.data[0].specialSeat);
+      }
     };
-    fetchSvApi();
+    fetchEventApi();
   }, [callApi]);
 
+  // user gui info để đki tham gia skien
   useEffect(() => {
     if (clientData) {
       const createDsApi = async () => {
         try {
-          await svApi.createDssvDaDangKy(clientData);
+          await eventApi.registerEvent(clientData);
         } catch (error) {
           console.log(error);
         }
@@ -54,153 +72,22 @@ function DataProvider({ children }) {
       createDsApi();
     }
   }, [clientData]);
-  
-  useEffect(() => {
-    if (typeSort.type === "mssv") {
-      sortMssv(dssvDaDangKy);
-    } else if (typeSort.type === "class") {
-      sortClass(dssvDaDangKy);
-    } else if (typeSort.type === "major") {
-      sortMajor(dssvDaDangKy);
-    } else {
-      sortDonvi(dssvDaDangKy);
-    }
-  });
-
-  const sortMssv = (spData) => {
-    let tmpData = spData;
-    if (typeSort.az) {
-      for (let i = 0; i < tmpData.length; i++) {
-        for (let j = i + 1; j < tmpData.length; j++) {
-          if (tmpData[i].mssv > tmpData[j].mssv) {
-            let tmp = tmpData[j];
-            tmpData[j] = tmpData[i];
-            tmpData[i] = tmp;
-          }
-        }
-      }
-    } else {
-      for (let i = 0; i < tmpData.length; i++) {
-        for (let j = i + 1; j < tmpData.length; j++) {
-          if (tmpData[i].mssv < tmpData[j].mssv) {
-            let tmp = tmpData[j];
-            tmpData[j] = tmpData[i];
-            tmpData[i] = tmp;
-          }
-        }
-      }
-    }
-
-    tmpData.forEach((item, index) => {
-      item.id = index + 1;
-    });
-
-    setData(tmpData);
-  };
-
-  const sortClass = (spData) => {
-    let tmpData = spData;
-    if (typeSort.az) {
-      for (let i = 0; i < tmpData.length; i++) {
-        for (let j = i + 1; j < tmpData.length; j++) {
-          if (tmpData[i].lop > tmpData[j].lop) {
-            let tmp = tmpData[j];
-            tmpData[j] = tmpData[i];
-            tmpData[i] = tmp;
-          }
-        }
-      }
-    } else {
-      for (let i = 0; i < tmpData.length; i++) {
-        for (let j = i + 1; j < tmpData.length; j++) {
-          if (tmpData[i].lop < tmpData[j].lop) {
-            let tmp = tmpData[j];
-            tmpData[j] = tmpData[i];
-            tmpData[i] = tmp;
-          }
-        }
-      }
-    }
-
-    tmpData.forEach((item, index) => {
-      item.id = index + 1;
-    });
-
-    setData(tmpData);
-  };
-
-  const sortMajor = (spData) => {
-    let tmpData = spData;
-    if (typeSort.az) {
-      for (let i = 0; i < tmpData.length; i++) {
-        for (let j = i + 1; j < tmpData.length; j++) {
-          if (tmpData[i].nghanh > tmpData[j].nghanh) {
-            let tmp = tmpData[j];
-            tmpData[j] = tmpData[i];
-            tmpData[i] = tmp;
-          }
-        }
-      }
-    } else {
-      for (let i = 0; i < tmpData.length; i++) {
-        for (let j = i + 1; j < tmpData.length; j++) {
-          if (tmpData[i].nghanh < tmpData[j].nghanh) {
-            let tmp = tmpData[j];
-            tmpData[j] = tmpData[i];
-            tmpData[i] = tmp;
-          }
-        }
-      }
-    }
-
-    tmpData.forEach((item, index) => {
-      item.id = index + 1;
-    });
-    setData(tmpData);
-  };
-
-  const sortDonvi = (spData) => {
-    let tmpData = spData;
-    if (typeSort.az) {
-      for (let i = 0; i < tmpData.length; i++) {
-        for (let j = i + 1; j < tmpData.length; j++) {
-          if (tmpData[i].donVi > tmpData[j].donVi) {
-            let tmp = tmpData[j];
-            tmpData[j] = tmpData[i];
-            tmpData[i] = tmp;
-          }
-        }
-      }
-    } else {
-      for (let i = 0; i < tmpData.length; i++) {
-        for (let j = i + 1; j < tmpData.length; j++) {
-          if (tmpData[i].donVi < tmpData[j].donVi) {
-            let tmp = tmpData[j];
-            tmpData[j] = tmpData[i];
-            tmpData[i] = tmp;
-          }
-        }
-      }
-    }
-
-    tmpData.forEach((item, index) => {
-      item.id = index + 1;
-    });
-
-    setData(tmpData);
-  };
 
   return (
     <DataContext.Provider
       value={{
         data,
         checkAlready,
+        setDssvDaDangKy,
+        dssvDaDangKy,
         setData,
-        setTypeSort,
         checkMssv,
         setClientData,
         setCallApi,
-        callApi
+        callApi,
+        idEvent,
+        setIdEvent,
+        specialSeat,isAdmin,setIsAdmin
       }}
     >
       {children}

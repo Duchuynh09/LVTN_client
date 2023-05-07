@@ -12,7 +12,7 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(
   <Router>
-    <React.StrictMode>
+    {/* <React.StrictMode> */}
       <DataProvider>
         <ModalProvider>
           <SearchProvider>
@@ -20,6 +20,6 @@ root.render(
           </SearchProvider>
         </ModalProvider>
       </DataProvider>
-    </React.StrictMode>
+    {/* </React.StrictMode> */}
   </Router>
 );

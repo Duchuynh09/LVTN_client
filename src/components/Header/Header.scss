@@ -117,7 +117,7 @@
 
       &__tienIch {
         width: 170px;
-        height: 120px;
+        height: auto;
         top: 0;
         transform: translateY(5px);
         background-color: $txt-white;
@@ -151,6 +151,7 @@
 
     &__item.active {
       background-color: $main-color;
+      
     }
   }
 

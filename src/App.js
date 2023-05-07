@@ -1,5 +1,5 @@
 import { Route, Routes } from "react-router-dom";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import classNames from "classnames/bind";
 
 import { Fragment } from "react";
@@ -8,18 +8,20 @@ import { Modal, Button } from "react-bootstrap";
 import { publicRoute, privateRoute } from "./config/routeConfig";
 import DefaultLayout from "./layouts/DefaultLayout";
 import ModalContext from "./store/ModalContext";
+import DataContext from "./store/DataContext";
 
 import style from "./App.scss";
 
-const cx = classNames.bind(style)
+const cx = classNames.bind(style);
 
 function App() {
-  const admin = {
-    userName: "admin",
-    pass: "123",
-  };
+  const user = JSON.parse(localStorage.getItem("user"));
   const ModalContextt = useContext(ModalContext);
+  const DataContextt = useContext(DataContext);
+
   const handleClose = () => ModalContextt.setShow(false);
+
+
   return (
     <div>
       <Routes>
@@ -38,8 +40,8 @@ function App() {
             ></Route>
           );
         })}
-        {admin.userName === "admin" &&
-          admin.pass === "123" &&
+
+        {(DataContextt.isAdmin || user?.isAdmin) &&
           privateRoute.map((item, index) => {
             let Layout = DefaultLayout;
             if (item.layout) {
@@ -58,7 +60,9 @@ function App() {
       </Routes>
 
       <Modal show={ModalContextt.show} onHide={handleClose}>
-        <div className={`border-3 rounded-3 border border-${ModalContextt.type} text-center`} >
+        <div
+          className={`border-3 rounded-3 border border-${ModalContextt.type} text-center`}
+        >
           <Modal.Header closeButton></Modal.Header>
           <div className={`modal-title text-${ModalContextt.type}`}>
             <BiInfoCircle></BiInfoCircle>
@@ -68,7 +72,11 @@ function App() {
             <b>{ModalContextt.mess}</b>
           </p>
           <Modal.Footer>
-            <Button variant={`${ModalContextt.type}`} className={cx('text-white')} onClick={handleClose}>
+            <Button
+              variant={`${ModalContextt.type}`}
+              className={cx("text-white")}
+              onClick={handleClose}
+            >
               Close
             </Button>
           </Modal.Footer>

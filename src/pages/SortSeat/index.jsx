@@ -1,11 +1,15 @@
 /* eslint-disable array-callback-return */
 import classnames from "classnames/bind";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { Button } from "react-bootstrap";
 import { BiSortAZ, BiSortZA } from "react-icons/bi";
 import DataContext from "../../store/DataContext";
+import ButtonGroup from "react-bootstrap/ButtonGroup";
+import Dropdown from "react-bootstrap/Dropdown";
+import DropdownButton from "react-bootstrap/DropdownButton";
 
 import style from "./SortSeat.scss";
+import eventApi from "../../api/eventApi";
 const cx = classnames.bind(style);
 
 function SortSeat() {
@@ -83,49 +87,35 @@ function SortSeat() {
       nghanh: "Quản trị dịch vụ du lịch và lữ hành",
     },
   ];
+
   const [spData, setSpData] = useState(sampleData);
   const [az, setAz] = useState(true);
   const DataContextt = useContext(DataContext);
 
-  const sortMssv = () => {
-    let tmpData = spData;
-    if (az) {
-      for (let i = 0; i < tmpData.length; i++) {
-        for (let j = i + 1; j < tmpData.length; j++) {
-          if (tmpData[i].mssv > tmpData[j].mssv) {
-            let tmp = tmpData[j];
-            tmpData[j] = tmpData[i];
-            tmpData[i] = tmp;
-          }
-        }
-      }
-    } else {
-      for (let i = 0; i < tmpData.length; i++) {
-        for (let j = i + 1; j < tmpData.length; j++) {
-          if (tmpData[i].mssv < tmpData[j].mssv) {
-            let tmp = tmpData[j];
-            tmpData[j] = tmpData[i];
-            tmpData[i] = tmp;
-          }
-        }
-      }
-    }
+  const [optionTitle, setOptionTitle] = useState();
+  const [indexOpSelect, setIndexOpSelect] = useState(0);
+  const [optionData, setOptionData] = useState();
 
-    tmpData.forEach((item, index) => {
-      item.id = index + 1;
-    });
+  useEffect(() => {
+    const fetchOptionEvent = async () => {
+      const res = await eventApi.getEvents();
+      setOptionData(res.data);
+    };
+    fetchOptionEvent();
+  }, []);
 
-    setAz(!az);
-    setSpData(tmpData);
-    DataContextt.setTypeSort({ type: "mssv", atoZ: az });
+  const handleSelectOption = (item, index) => {
+    setOptionTitle(item.name + " ( " + item.date); // title cua su kien duoc chon
+    setIndexOpSelect(index);
+    DataContextt.setIdEvent(item._id);
   };
 
-  const sortClass = () => {
+  const sortSample = (type) => {
     let tmpData = spData;
     if (az) {
       for (let i = 0; i < tmpData.length; i++) {
         for (let j = i + 1; j < tmpData.length; j++) {
-          if (tmpData[i].lop > tmpData[j].lop) {
+          if (tmpData[i][type] > tmpData[j][type]) {
             let tmp = tmpData[j];
             tmpData[j] = tmpData[i];
             tmpData[i] = tmp;
@@ -135,7 +125,7 @@ function SortSeat() {
     } else {
       for (let i = 0; i < tmpData.length; i++) {
         for (let j = i + 1; j < tmpData.length; j++) {
-          if (tmpData[i].lop < tmpData[j].lop) {
+          if (tmpData[i][type] < tmpData[j][type]) {
             let tmp = tmpData[j];
             tmpData[j] = tmpData[i];
             tmpData[i] = tmp;
@@ -150,80 +140,61 @@ function SortSeat() {
 
     setAz(!az);
     setSpData(tmpData);
-    DataContextt.setTypeSort({ type: "class", atoZ: az });
-
   };
 
-  const sortMajor = () => {
-    let tmpData = spData;
-    if (az) {
-      for (let i = 0; i < tmpData.length; i++) {
-        for (let j = i + 1; j < tmpData.length; j++) {
-          if (tmpData[i].nghanh > tmpData[j].nghanh) {
-            let tmp = tmpData[j];
-            tmpData[j] = tmpData[i];
-            tmpData[i] = tmp;
-          }
-        }
+  const handleSoftList = (type) => {
+    sortSample(type);
+
+    const softApi = async () => {
+      const payload = {
+        idEvent : DataContextt.idEvent,
+        az,
+        type
       }
-    } else {
-      for (let i = 0; i < tmpData.length; i++) {
-        for (let j = i + 1; j < tmpData.length; j++) {
-          if (tmpData[i].nghanh < tmpData[j].nghanh) {
-            let tmp = tmpData[j];
-            tmpData[j] = tmpData[i];
-            tmpData[i] = tmp;
-          }
-        }
-      }
-    }
-
-    tmpData.forEach((item, index) => {
-      item.id = index + 1;
-    });
-
-    setAz(!az);
-    setSpData(tmpData);
-    DataContextt.setTypeSort({ type: "major", atoZ: az });
-
-  };
-
-  const sortDonvi = () => {
-    let tmpData = spData;
-    if (az) {
-      for (let i = 0; i < tmpData.length; i++) {
-        for (let j = i + 1; j < tmpData.length; j++) {
-          if (tmpData[i].donVi > tmpData[j].donVi) {
-            let tmp = tmpData[j];
-            tmpData[j] = tmpData[i];
-            tmpData[i] = tmp;
-          }
-        }
-      }
-    } else {
-      for (let i = 0; i < tmpData.length; i++) {
-        for (let j = i + 1; j < tmpData.length; j++) {
-          if (tmpData[i].donVi < tmpData[j].donVi) {
-            let tmp = tmpData[j];
-            tmpData[j] = tmpData[i];
-            tmpData[i] = tmp;
-          }
-        }
-      }
-    }
-
-    tmpData.forEach((item, index) => {
-      item.id = index + 1;
-    });
-
-    setAz(!az);
-    setSpData(tmpData);
-    DataContextt.setTypeSort({type:'donVi',atoZ:az});
-
+      const res = await eventApi.softList(payload);
+      console.log(res.state);
+    };
+    softApi()
   };
 
   return (
     <div className={cx("wrapper")}>
+      <div className="d-flex justify-content-end m-4">
+        <DropdownButton
+          as={ButtonGroup}
+          id={`dropdown-variants-Secondary`}
+          variant={"secondary"}
+          title={
+            (optionTitle ||
+              (optionData &&
+                optionData[0]?.name + " ( " + optionData[0]?.date)) + " ) " ||
+            ""
+          }
+        >
+          {optionData?.map((item, index) => {
+            if (index === indexOpSelect) {
+              return (
+                <Dropdown.Item
+                  key={item._id}
+                  active
+                  onClick={() => handleSelectOption(item, index)}
+                >
+                  {item.name + " ( " + item.date + " ) "}
+                </Dropdown.Item>
+              );
+            } else {
+              return (
+                <Dropdown.Item
+                  key={item._id}
+                  onClick={() => handleSelectOption(item, index)}
+                >
+                  {item.name + " ( " + item.date + " ) "}
+                </Dropdown.Item>
+              );
+            }
+          })}
+        </DropdownButton>
+      </div>
       <div className="sort-seat">
         <div className="sort-seat__main">
           <ul className="sort-seat__main__list reverse">
@@ -262,20 +233,20 @@ function SortSeat() {
         </div>
       </div>
       <div className="sort-seat__control">
-        <Button onClick={sortMssv}>
-          Sắp theo mã số đinh viên{" "}
+        <Button onClick={()=>handleSoftList("mssv")}>
+          Sắp theo mã số đinh viên
           {az ? <BiSortAZ></BiSortAZ> : <BiSortZA></BiSortZA>}
         </Button>
 
-        <Button onClick={sortClass}>
+        <Button onClick={()=>handleSoftList("lop")}>
           Sắp theo lớp {az ? <BiSortAZ></BiSortAZ> : <BiSortZA></BiSortZA>}
         </Button>
 
-        <Button onClick={sortMajor}>
+        <Button onClick={()=>handleSoftList("nghanh")}>
           Sắp theo nghành {az ? <BiSortAZ></BiSortAZ> : <BiSortZA></BiSortZA>}
         </Button>
 
-        <Button onClick={sortDonvi}>
+        <Button onClick={()=>handleSoftList("maDonVi")}>
           Sắp theo đơn vị {az ? <BiSortAZ></BiSortAZ> : <BiSortZA></BiSortZA>}
         </Button>
       </div>

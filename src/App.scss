@@ -31,9 +31,9 @@ a {
   text-decoration: none !important;
   color: unset;
 
-  &:hover {
-    color: $main-color;
-  }
+  // &:hover {
+  //   color: $main-color !important;
+  // }
 }
 
 img {

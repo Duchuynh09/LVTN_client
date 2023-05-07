@@ -1,0 +1,34 @@
+@use "../../scss/" as *;
+
+
+.feedBackItem {
+    background-color: $main-bg;
+    box-shadow: $box-shadow;  
+    padding: 10px;
+    margin: 10px;
+}
+
+.feedBackContent {
+    display: flex;
+    align-items: center
+}
+
+.feedBackDescription {
+    font-size: 16px;
+    word-break: normal;
+    user-select: text;
+}
+
+.feedBackAvt {
+    font-size: 30px;
+}
+
+.feedBackEmail {
+    font-size: 18px;
+
+}
+
+.feedBackRight {
+    background-color: $main-bg;
+    box-shadow: $box-shadow;
+}

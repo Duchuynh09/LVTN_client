@@ -1,12 +1,15 @@
 import { useContext, useEffect, useState } from "react";
 import classNames from "classnames/bind";
+import ButtonGroup from "react-bootstrap/ButtonGroup";
+import Dropdown from "react-bootstrap/Dropdown";
+import DropdownButton from "react-bootstrap/DropdownButton";
 
-import SeatList from "../../components/SeatList";
 import SearchContext from "../../store/SearchContext";
 import ModalContext from "../../store/ModalContext";
 import DataContext from "../../store/DataContext";
 import style from "./Map.scss";
-import svApi from "../../api/svApi";
+import eventApi from "../../api/eventApi";
+import SeatContainer from "../../components/SeatContainer";
 
 const cx = classNames.bind(style);
 
@@ -14,173 +17,144 @@ function Map() {
   const DataContextt = useContext(DataContext);
   const SearchContextt = useContext(SearchContext);
   const ModalContextt = useContext(ModalContext);
-  const [data, setData] = useState(DataContextt.data);
   let idsv = SearchContextt.idSeat;
+
+  const [optionTitle, setOptionTitle] = useState();
+  const [indexOpSelect, setIndexOpSelect] = useState(0);
+  const [optionData, setOptionData] = useState();
+  const [optionState, setOptionState] = useState();
+
+  useEffect(() => {
+    const fetchOptionEvent = async () => {
+      const res = await eventApi.getEvents();
+      setOptionData(res.data);
+      if (res.data) DataContextt.setDssvDaDangKy(res?.data[0]?.dsDaDangKy);
+      // vua dki xong la cho ngoi se duoc cap nhat ngay
+    };
+    fetchOptionEvent();
+  }, []);
 
   useEffect(() => {
     if (SearchContextt.isSearch) {
-      const fetchSvApi = async () => {
-        const respone = await svApi.getDssvDaDangKy();
-        DataContextt.setData(respone);
-        for (let index = 0; index < respone.length; index++) {
-          if (respone[index].mssv === idsv) {
-            const sv = document.querySelector(`#${idsv}`);
-            if (sv) {
-              if (document.querySelector(".activeSeat")) {
-                document
-                  .querySelector(".activeSeat")
-                  .classList.remove("activeSeat");
-              }
-              sv.classList.add("activeSeat");
-              ModalContextt.setMess(
-                `Vị trí ghế ngồi tạm thời của bạn là ${sv.firstElementChild.attributes.name.value} (Bạn vui lòng quay lại kiểm tra vào 2 ngày tới)`
+      if (!optionState) {
+        // từ trang khác sang phải chọn lại sự kiện
+        ModalContextt.setMess("Vui lòng chọn sự kiện mà bạn muốn tìm!");
+        ModalContextt.setType("danger");
+        ModalContextt.setShow(!ModalContextt.show);
+      }
+      const fetchEventApiById = async () => {
+        if (optionState || optionData) {
+          const respone = await eventApi.getDssvDaDangKy(
+            optionState?._id || (optionData && optionData[0]._id)
+          );
+
+          DataContextt.setData(respone.data);
+          for (let index = 0; index < respone.data.length; index++) {
+            if (
+              respone.data[index].mssv.toString().toUpperCase() ===
+              idsv.toString().toUpperCase()
+            ) {
+              const sv = document.querySelector(
+                `#${idsv.toString().toUpperCase()}`
               );
 
-              ModalContextt.setType("success");
+              if (sv) {
+                setTimeout(() => {
+                  if (document.querySelector(".activeSeat")) {
+                    document
+                      .querySelector(".activeSeat")
+                      .classList.remove("activeSeat");
+                  }
+                  document
+                    .querySelector(`#${idsv.toString().toUpperCase()}`)
+                    ?.classList.add("activeSeat");
+                }, 500); // tránh render quá nhanh mất class
+
+                ModalContextt.setMess(
+                  `Vị trí ghế ngồi tạm thời của bạn là ${sv.firstElementChild.attributes.name.value} (Bạn vui lòng quay lại kiểm tra vào 2 ngày tới)`
+                );
+                ModalContextt.setType("success");
+                ModalContextt.setShow(!ModalContextt.show);
+                return;
+              }
+            } else if (idsv === "empty") {
+              ModalContextt.setMess(
+                "Vui lòng nhập mã số sinh viên của bạn để tìm kiếm ghế ngồi!"
+              );
+              ModalContextt.setType("danger");
               ModalContextt.setShow(!ModalContextt.show);
-              return;
+            } else if (idsv === undefined) {
+            } else {
+              ModalContextt.setMess(
+                "Không tìm thấy ghế ngồi! (Vui lòng kiểm tra lại mã sinh viên hoặc refresh lại website!)"
+              );
+              ModalContextt.setType("info");
+              ModalContextt.setShow(!ModalContextt.show);
             }
-          } else if (idsv === "empty") {
-            ModalContextt.setMess(
-              "Vui lòng nhập mã số sinh viên của bạn để tìm kiếm ghế ngồi!"
-            );
-            ModalContextt.setType("danger");
-            ModalContextt.setShow(!ModalContextt.show);
-          } else if (idsv === undefined) {
-          } else {
-            ModalContextt.setMess(
-              "Không tìm thấy ghế ngồi! (Vui lòng kiểm tra lại mã sinh viên hoặc refresh lại website!)"
-            );
-            ModalContextt.setType("info");
-            ModalContextt.setShow(!ModalContextt.show);
           }
         }
       };
-      fetchSvApi();
+      fetchEventApiById();
+
       SearchContextt.setIsSearch(false);
     }
-  });
+  }, [SearchContextt.isSearch]);
 
-  useEffect(() => {
-    setData(DataContextt.data);
-  }, [DataContextt.data]);
-
-  const A = [28];
-  const B = [36];
-  const C = [38];
-  const D = [36];
-  const E = [44];
-  const F = [42];
-  const G = [44];
-  const H = [42];
-  const I = [42];
-  const K = [40];
-  const L = [42];
-  const M = [40];
-  const N = [40];
-  const O = [40];
-  const P = [40];
-  const Q = [38];
-  const R = [38];
-  const S = [36];
-  const T = [36];
-  const U = [34];
-  const V = [36];
-  const X = [36];
-  const Y = [36];
-  const Z = [24];
-
-  const isFull = (item) => {
-    let slpt = item[0];
-    if (item[slpt] === undefined) {
-      return false;
+  const handleSelectOption = (item, index) => {
+    if (JSON.parse(localStorage.getItem("tienIch"))) {
+      ModalContextt.setShow(true);
+      ModalContextt.setType("info");
+      ModalContextt.setMess("Vui lòng bỏ chọn tiện ích!");
     } else {
-      return true;
+      setOptionTitle(`${item.name} ( ${item.time} ${item.date} )`); // title cua su kien duoc chon
+      setIndexOpSelect(index);
+      setOptionState(item);
+      DataContextt.setIdEvent(item._id);
     }
   };
-
-  for (let i = 0; i < DataContextt.data.length; i++) {
-    // if (!isFull(A)) {
-    //   A.push(data[i]);
-    // } else  // day nay cho bgk
-    if (!isFull(B)) {
-      B.push(data[i]);
-    } else if (!isFull(C)) {
-      C.push(data[i]);
-    } else if (!isFull(D)) {
-      D.push(data[i]);
-    } else if (!isFull(E)) {
-      E.push(data[i]);
-    } else if (!isFull(F)) {
-      F.push(data[i]);
-    } else if (!isFull(G)) {
-      G.push(data[i]);
-    } else if (!isFull(H)) {
-      H.push(data[i]);
-    } else if (!isFull(I)) {
-      I.push(data[i]);
-    } else if (!isFull(K)) {
-      K.push(data[i]);
-    } else if (!isFull(L)) {
-      L.push(data[i]);
-    } else if (!isFull(M)) {
-      M.push(data[i]);
-    } else if (!isFull(N)) {
-      N.push(data[i]);
-    } else if (!isFull(O)) {
-      O.push(data[i]);
-    } else if (!isFull(P)) {
-      P.push(data[i]);
-    } else if (!isFull(Q)) {
-      Q.push(data[i]);
-    } else if (!isFull(R)) {
-      R.push(data[i]);
-    } else if (!isFull(S)) {
-      S.push(data[i]);
-    } else if (!isFull(T)) {
-      T.push(data[i]);
-    } else if (!isFull(U)) {
-      U.push(data[i]);
-    } else if (!isFull(V)) {
-      V.push(data[i]);
-    } else if (!isFull(X)) {
-      X.push(data[i]);
-    } else if (!isFull(Y)) {
-      Y.push(data[i]);
-    } else {
-      Z.push(data[i]);
-    }
-  }
 
   return (
     <div className="wrapper">
       <h2 className="mt-5 text-center">SƠ ĐỒ HỘI TRƯỜNG RÙA</h2>
-      <div className={cx("seat-container")}>
-        <SeatList Array={A} nameArray="A"></SeatList>
-        <SeatList Array={B} nameArray="B"></SeatList>
-        <SeatList Array={C} nameArray="C"></SeatList>
-        <SeatList Array={D} nameArray="D"></SeatList>
-        <SeatList Array={E} nameArray="E"></SeatList>
-        <SeatList Array={F} nameArray="F"></SeatList>
-        <SeatList Array={G} nameArray="G"></SeatList>
-        <SeatList Array={H} nameArray="H"></SeatList>
-        <SeatList Array={I} nameArray="I"></SeatList>
-        <SeatList Array={K} nameArray="K"></SeatList>
-        <SeatList Array={L} nameArray="L"></SeatList>
-        <SeatList Array={M} nameArray="M"></SeatList>
-        <SeatList Array={N} nameArray="N"></SeatList>
-        <SeatList Array={O} nameArray="O"></SeatList>
-        <SeatList Array={P} nameArray="P"></SeatList>
-        <SeatList Array={Q} nameArray="Q"></SeatList>
-        <SeatList Array={R} nameArray="R"></SeatList>
-        <SeatList Array={S} nameArray="S"></SeatList>
-        <SeatList Array={T} nameArray="T"></SeatList>
-        <SeatList Array={U} nameArray="U"></SeatList>
-        <SeatList Array={V} nameArray="V"></SeatList>
-        <SeatList Array={X} nameArray="X"></SeatList>
-        <SeatList Array={Y} nameArray="Y"></SeatList>
-        <SeatList Array={Z} nameArray="Z"></SeatList>
+      <div className="d-flex justify-content-end m-4">
+        <DropdownButton
+          as={ButtonGroup}
+          id={`dropdown-variants-Secondary`}
+          variant={"secondary"}
+          title={
+            optionTitle ||
+            (optionData &&
+              (optionData[0]?.name || '') +
+                ` ( ${optionData[0]?.time || 'Hiện tại chưa có sự kiện'} ${optionData[0]?.date || ''} )`) || '' 
+          }
+        >
+          {optionData?.map((item, index) => {
+            if (index === indexOpSelect) {
+              return (
+
+                <Dropdown.Item
+                  key={item._id}
+                  active
+                  onClick={() => handleSelectOption(item, index)}
+                >
+                  {item.name + " ( " + item.time + " " + item.date + " ) "}
+                </Dropdown.Item>
+              );
+            } else {
+              return (
+                <Dropdown.Item
+                  key={item._id}
+                  onClick={() => handleSelectOption(item, index)}
+                >
+                  {item.name + " ( " + item.time + " " + item.date + " ) "}
+                </Dropdown.Item>
+              );
+            }
+          })}
+        </DropdownButton>
       </div>
+
+      <SeatContainer></SeatContainer>
       <div className={cx("map-mobile")}>
         <img
           src="https://2.bp.blogspot.com/-5x7mA-I6gDA/XDBsvamqakI/AAAAAAAAHMs/cn7vjxYPqxY3cD8kSY6CHtdxEcmgDXBawCLcBGAs/s1600/ch%25E1%25BB%2597%2Bng%25E1%25BB%2593i%2B%25282%2529.png"

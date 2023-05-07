@@ -7,9 +7,10 @@ import {
   BiCaretDown,
   BiSearch,
   BiWindowAlt,
-  BiUser,
   BiCog,
   BiLogOut,
+  BiTask,
+  BiGroup,
 } from "react-icons/bi";
 import TippyHeadless from "@tippyjs/react/headless";
 import { Link, useNavigate } from "react-router-dom";
@@ -29,8 +30,7 @@ function Header() {
   const [showTienIch, setShowTienIch] = useState(false);
   const [showLang, setShowLang] = useState(false);
   const [showUserOption, setShowUserOption] = useState(false);
-
-  const [currentPage, setCurrentPage] = useState("home");
+  const [currentPage, setCurrentPage] = useState(window.location.pathname);
 
   const SearchContextt = useContext(SearchContext);
   const ModalContextt = useContext(ModalContext);
@@ -52,28 +52,53 @@ function Header() {
   };
 
   useEffect(() => {
+    setCurrentPage(window.location.pathname);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [window.location.pathname]);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    const pathName = window.location.pathname;
+    if (pathName.toString() !== "/map") {
+      setShowSeat(false);
+      setShowEmptySeat(false);
+      localStorage.setItem("tienIch", JSON.stringify(false));
+    }
+  }); // tự động xóa tiện ích đã chọn khi ng dùng chuyển trang
+
+  useEffect(() => {
     const ref = document.querySelectorAll(".seat__row.empty");
     if (showEmptySeat) {
       ref.forEach((item) => {
         item.style.backgroundColor = "red";
       });
+      localStorage.setItem("tienIch", JSON.stringify(true));
     } else {
       ref.forEach((item) => {
-        item.style.backgroundColor = "transparent";
+        item.style.backgroundColor = "";
       });
+      localStorage.setItem("tienIch", JSON.stringify(false));
     }
   }, [showEmptySeat]);
 
   useEffect(() => {
     const ref = document.querySelectorAll(".seat__row:not(.empty)");
+    const ref2 = document.querySelector(".seat__row.activeSeat"); // Xoa luon cho ngoi vua tim
+
     if (showSeat) {
       ref.forEach((item) => {
         item.style.backgroundColor = "#008000";
       });
+      localStorage.setItem("tienIch", JSON.stringify(true));
     } else {
       ref.forEach((item) => {
         item.style.backgroundColor = "";
       });
+      if (ref2) {
+        ref2.classList.remove("activeSeat");
+      }
+
+      localStorage.setItem("tienIch", JSON.stringify(false));
     }
   }, [showSeat]);
 
@@ -82,15 +107,14 @@ function Header() {
     ModalContextt.setShow(true);
     ModalContextt.setType("success");
     ModalContextt.setMess("Đăng xuất thành công!");
+    next("/");
   };
 
-  const handleNotify = ()=>{
+  const handleNotify = () => {
     ModalContextt.setShow(true);
     ModalContextt.setType("info");
     ModalContextt.setMess("Coming soon!");
-  }
-
-
+  };
 
   return (
     <div className={cx("wrapper")}>
@@ -117,7 +141,6 @@ function Header() {
                   <div {...props} className={cx("userOption")}>
                     <div className={cx("userOption__item")}>
                       <p onClick={handleNotify}>
-                        {" "}
                         <BiWindowAlt></BiWindowAlt> Trang cá nhân
                       </p>
                     </div>
@@ -126,21 +149,26 @@ function Header() {
                         "userOption__item userOption__item__border"
                       )}
                     >
-                      <p onClick={handleNotify}>
-                        {" "}
-                        <BiUser></BiUser>Hồ sơ
+                      <p>
+                        <Link to={"/userEventManager"}>
+                          <BiTask></BiTask>Sự kiện
+                        </Link>
                       </p>
-                      <p onClick={handleNotify}>
-                        <BiMessageAlt></BiMessageAlt>Tin nhắn
-                      </p>
+                      {user?.isAdmin && (
+                        <p>
+                          <Link to={"/userManager"}>
+                            <BiGroup></BiGroup>Quản lí người dùng
+                          </Link>
+                        </p>
+                      )}
+
                       <p onClick={handleNotify}>
                         <BiCog></BiCog>Tùy chọn
                       </p>
                     </div>
                     <div className={cx("userOption__item")}>
                       <p onClick={handleLogout}>
-                        {" "}
-                        <BiLogOut ></BiLogOut>Thoát
+                        <BiLogOut></BiLogOut>Thoát
                       </p>
                     </div>
                   </div>
@@ -170,9 +198,8 @@ function Header() {
         <ul className={cx("nav__list")}>
           <li
             className={cx("nav__list__item", {
-              active: currentPage === "home",
+              active: currentPage === "/home",
             })}
-            onClick={() => setCurrentPage("home")}
           >
             <Link to={"/home"}>
               {currentLang === "vi" ? "Trang chủ" : "Home"}
@@ -182,9 +209,8 @@ function Header() {
           {!user && (
             <li
               className={cx("nav__list__item", {
-                active: currentPage === "register",
+                active: currentPage === "/register",
               })}
-              onClick={() => setCurrentPage("register")}
             >
               <Link to={"/register"}>
                 {currentLang === "vi" ? "Đăng ký" : "Register"}
@@ -194,9 +220,8 @@ function Header() {
           {!user && (
             <li
               className={cx("nav__list__item", {
-                active: currentPage === "login",
+                active: currentPage === "/",
               })}
-              onClick={() => setCurrentPage("login")}
             >
               <Link to={"/"}>
                 {currentLang === "vi" ? "Đăng nhập" : "Login"}
@@ -207,16 +232,15 @@ function Header() {
           {user && (
             <li
               className={cx("nav__list__item", {
-                active: currentPage === "map",
+                active: currentPage === "/map",
               })}
-              onClick={() => setCurrentPage("map")}
             >
               <Link to={"/map"}>{currentLang === "vi" ? "Bản đồ" : "Map"}</Link>
             </li>
           )}
           <li
             className={cx("nav__list__item tienIch", {
-              activeTienIch: currentPage === "map",
+              activeTienIch: currentPage === "/map",
             })}
             onClick={() => setShowTienIch(!showTienIch)}
           >
@@ -246,11 +270,22 @@ function Header() {
                   >
                     Các ghế đã đăng ký
                   </Button>
+
+                  <Button
+                    variant="secondary"
+                    onClick={() => {
+                      setShowSeat(false);
+                      setShowEmptySeat(false);
+                      localStorage.setItem("tienIch", JSON.stringify(false));
+                    }}
+                  >
+                    Xóa tiện ích
+                  </Button>
                 </div>
               )}
             >
               <div>
-                {currentLang === "vi" ? "Tiện ích" : "Convenient"}{" "}
+                {currentLang === "vi" ? "Tiện ích" : "Convenient"}
                 <BiCaretDown></BiCaretDown>
               </div>
             </TippyHeadless>
@@ -259,9 +294,8 @@ function Header() {
           {user?.isAdmin && (
             <li
               className={cx("nav__list__item", {
-                active: currentPage === "sort",
+                active: currentPage === "/sort",
               })}
-              onClick={() => setCurrentPage("sort")}
             >
               <Link to={"/sortSeat"}>
                 {currentLang === "vi" ? "Sắp xếp" : "Sort"}
@@ -269,7 +303,7 @@ function Header() {
             </li>
           )}
 
-          {user?.isAdmin && (
+          {/* {user?.isAdmin && (
             <li
               className={cx("nav__list__item", {
                 active: currentPage === "updateGraList",
@@ -282,19 +316,42 @@ function Header() {
                   : "Update Graduation List"}
               </Link>
             </li>
-          )}
+          )} */}
 
           {user && (
             <li
               className={cx("nav__list__item", {
-                active: currentPage === "registerSeat",
+                active: currentPage === "/registerSeat",
               })}
-              onClick={() => setCurrentPage("registerSeat")}
             >
               <Link to={"/registerSeat"}>
                 {currentLang === "vi"
-                  ? "Đăng kí tham gia lễ tốt nghiệp"
-                  : "Sign up for the graduation"}
+                  ? "Đăng kí tham gia sự kiện"
+                  : "Register for the event"}
+              </Link>
+            </li>
+          )}
+
+          {(user?.isAdmin || user?.role === "giangVien") && (
+            <li
+              className={cx("nav__list__item", {
+                active: currentPage === "/createEvent",
+              })}
+            >
+              <Link to={"/createEvent"}>
+                {currentLang === "vi" ? "Tạo sự kiện" : "Create event"}
+              </Link>
+            </li>
+          )}
+
+          {user?.isAdmin && (
+            <li
+              className={cx("nav__list__item", {
+                active: currentPage === "/eventManager",
+              })}
+            >
+              <Link to={"/eventManager"}>
+                {currentLang === "vi" ? "Quản lí sự kiện" : "Event management"}
               </Link>
             </li>
           )}
@@ -333,7 +390,7 @@ function Header() {
               )}
             >
               <div>
-                {currentLang === "vi" ? "Vietnamese (vi)" : "English (en)"}{" "}
+                {currentLang === "vi" ? "Vietnamese (vi)" : "English (en)"}
                 <BiCaretDown></BiCaretDown>
               </div>
             </TippyHeadless>

@@ -6,6 +6,16 @@
   }
 }
 
+//custom bootstrap component
+.dropdown-menu {
+  width: 500px;
+  max-height: 255px;
+  overflow-y: scroll;
+}
+.dropdown-menu::-webkit-scrollbar {
+  display: none;
+}
+
 .map-mobile {
   display: none;
 
