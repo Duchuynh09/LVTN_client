@@ -43,7 +43,7 @@ const FeedBack = () => {
   useEffect(() => {
     const fetchFeedBack = async () => {
       const res = await userApi.getFeedback();
-  
+
       if (res.state === "success") {
         setData(res.data);
       }
@@ -63,7 +63,7 @@ const FeedBack = () => {
             <div className="feedBackDescription">
               <a
                 href={item.description}
-                target='_blank'
+                target="_blank"
                 rel="noopener noreferrer"
               >
                 {item.description}

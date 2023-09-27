@@ -1,6 +1,11 @@
 .view {
-    height: 100%;
-    min-height: calc(100vh - 25px);
-    background-repeat: no-repeat;
-    background-size: cover;
+  height: 100%;
+  min-height: calc(100vh - 25px);
+  background-repeat: no-repeat;
+  background-size: cover;
+  display: flex;
+  flex-direction: column;
+}
+.main_wrapper {
+  flex: 1;
 }

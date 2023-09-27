@@ -14,7 +14,7 @@ function Register() {
   const next = useNavigate();
 
   const [valid, setValid] = useState(false);
-  const [showErr,setShowErr] = useState(false)
+  const [showErr, setShowErr] = useState(false);
 
   const ModalContextt = useContext(ModalContext);
 
@@ -23,11 +23,10 @@ function Register() {
     handleSubmit,
     formState: { errors },
   } = useForm();
-
   const submit = (data) => {
     if (data.pass === data.pass2) {
       setValid(true);
-      
+
       const callApi = async () => {
         const result = await signUpApi.signUpUser({
           email: data.email,
@@ -38,7 +37,7 @@ function Register() {
           ModalContextt.setType("success");
           ModalContextt.setShow(!ModalContextt.show);
           next("/");
-        }else {
+        } else {
           ModalContextt.setMess(`Tài khoản đã tồn tại!`);
           ModalContextt.setType("danger");
           ModalContextt.setShow(!ModalContextt.show);
@@ -47,7 +46,7 @@ function Register() {
       callApi();
     } else {
       setValid(false);
-      setShowErr(true)
+      setShowErr(true);
     }
   };
 
@@ -68,15 +67,16 @@ function Register() {
                 placeholder="Email"
                 {...register("email", {
                   required: true,
-                  pattern:
-                    /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                  pattern: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                 })}
               />
               {errors.email?.type === "required" && (
                 <p className="text-danger">Vui lòng nhập email</p>
               )}
               {errors.email?.type === "pattern" && (
-                <p className="text-danger">Email không hợp lệ, vui lòng kiểm tra lại!</p>
+                <p className="text-danger">
+                  Email không hợp lệ, vui lòng kiểm tra lại!
+                </p>
               )}
             </Form.Group>
 
@@ -102,7 +102,9 @@ function Register() {
               {errors.pass2?.type === "required" && (
                 <p className="text-danger">Vui lòng nhập lại mật khẩu</p>
               )}
-              {!valid && showErr && <p className="text-danger">Mật khẩu không giống nhau</p>}
+              {!valid && showErr && (
+                <p className="text-danger">Mật khẩu không giống nhau</p>
+              )}
             </Form.Group>
             <Button
               variant="outline-primary"

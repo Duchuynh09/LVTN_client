@@ -1,42 +1,42 @@
 import classnames from "classnames/bind";
-import { useContext, useEffect, useState } from "react";
-import {
-  BiBell,
-  BiMessageAlt,
-  BiMailSend,
-  BiCaretDown,
-  BiSearch,
-  BiWindowAlt,
-  BiCog,
-  BiLogOut,
-  BiTask,
-  BiGroup,
-} from "react-icons/bi";
-import TippyHeadless from "@tippyjs/react/headless";
-import { Link, useNavigate } from "react-router-dom";
-import { Button } from "react-bootstrap";
+import { useCallback, useContext, useEffect, useState } from "react";
+import { BiBell, BiMessageAlt, BiMailSend } from "react-icons/bi";
+import { Link, useNavigate, useParams, useLocation } from "react-router-dom";
 
 import { logo } from "../../assets/logo";
 import style from "./Header.scss";
 import SearchContext from "../../store/SearchContext";
 import ModalContext from "../../store/ModalContext";
-const cx = classnames.bind(style);
 
-function Header() {
+import NavHome from "./NavHome";
+import NavRegister from "./NavRegister";
+import NavLogin from "./NavLogin";
+import NavTienIch from "./NavTienIch";
+// Lười sửa lại expot default
+import { NavSearch } from "./NavSearch";
+import { NavLanguage } from "./NavLanguage";
+import { NavRegisterSeat } from "./NavRegisterSeat";
+import { NavCreatEnvent } from "./NavCreatEnvent";
+import { NavMap } from "./NavMap";
+import { NavPosts } from "./NavPosts";
+import { UserActive } from "./UserActive";
+export const cx = classnames.bind(style);
+
+/*
+Tồn tại user mà sang trang login admin thì sao ????
+
+Nếu không tồn tại user thì header sé là Home,Login,Register,Language
+*/
+function Header({ user }) {
   const next = useNavigate();
   const [searchVal, setSearchVal] = useState("");
-  const [showEmptySeat, setShowEmptySeat] = useState(false);
-  const [showSeat, setShowSeat] = useState(false);
-  const [showTienIch, setShowTienIch] = useState(false);
   const [showLang, setShowLang] = useState(false);
-  const [showUserOption, setShowUserOption] = useState(false);
   const [currentPage, setCurrentPage] = useState(window.location.pathname);
 
   const SearchContextt = useContext(SearchContext);
   const ModalContextt = useContext(ModalContext);
-
-  const user = JSON.parse(localStorage.getItem("user"));
-
+  const params = useParams();
+  const location = useLocation();
   const currentLang = JSON.parse(localStorage.getItem("language"));
 
   const handleSearch = () => {
@@ -52,76 +52,39 @@ function Header() {
   };
 
   useEffect(() => {
-    setCurrentPage(window.location.pathname);
+    setCurrentPage(location.pathname);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [window.location.pathname]);
+  }, [location.pathname]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
-    const pathName = window.location.pathname;
-    if (pathName.toString() !== "/map") {
-      setShowSeat(false);
-      setShowEmptySeat(false);
-      localStorage.setItem("tienIch", JSON.stringify(false));
-    }
-  }); // tự động xóa tiện ích đã chọn khi ng dùng chuyển trang
-
-  useEffect(() => {
-    const ref = document.querySelectorAll(".seat__row.empty");
-    if (showEmptySeat) {
-      ref.forEach((item) => {
-        item.style.backgroundColor = "red";
-      });
-      localStorage.setItem("tienIch", JSON.stringify(true));
-    } else {
-      ref.forEach((item) => {
-        item.style.backgroundColor = "";
-      });
-      localStorage.setItem("tienIch", JSON.stringify(false));
-    }
-  }, [showEmptySeat]);
-
-  useEffect(() => {
-    const ref = document.querySelectorAll(".seat__row:not(.empty)");
-    const ref2 = document.querySelector(".seat__row.activeSeat"); // Xoa luon cho ngoi vua tim
-
-    if (showSeat) {
-      ref.forEach((item) => {
-        item.style.backgroundColor = "#008000";
-      });
-      localStorage.setItem("tienIch", JSON.stringify(true));
-    } else {
-      ref.forEach((item) => {
-        item.style.backgroundColor = "";
-      });
-      if (ref2) {
-        ref2.classList.remove("activeSeat");
-      }
-
-      localStorage.setItem("tienIch", JSON.stringify(false));
-    }
-  }, [showSeat]);
-
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
+    document.cookie = `id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+    document.cookie = `token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
     localStorage.removeItem("user");
-    ModalContextt.setShow(true);
-    ModalContextt.setType("success");
-    ModalContextt.setMess("Đăng xuất thành công!");
     next("/");
-  };
+  }, [ next]);
 
   const handleNotify = () => {
     ModalContextt.setShow(true);
     ModalContextt.setType("info");
     ModalContextt.setMess("Coming soon!");
   };
-
+  useEffect(() => {
+    try {
+      const id = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("id="))
+        .split("=")[1];
+    } catch (error) {
+      if (user) handleLogout();
+    }
+  }, [handleLogout, user]);
   return (
     <div className={cx("wrapper")}>
       <header className={cx("header")}>
         <div className={cx("header__logo")}>
           <img src={logo} alt="" />
         </div>
+        {/* Dòng User Active */}
         <div className={cx("header__service")}>
           <div className={cx("header__service__item")}>
             <div className={cx("header__service__item__icon")}>
@@ -130,60 +93,8 @@ function Header() {
               <BiMailSend onClick={handleNotify}></BiMailSend>
             </div>
           </div>
-
-          {user && (
-            <div className={cx("header__service__item")}>
-              <TippyHeadless
-                interactive
-                visible={showUserOption}
-                onClickOutside={() => setShowUserOption(!showUserOption)}
-                render={(props) => (
-                  <div {...props} className={cx("userOption")}>
-                    <div className={cx("userOption__item")}>
-                      <p onClick={handleNotify}>
-                        <BiWindowAlt></BiWindowAlt> Trang cá nhân
-                      </p>
-                    </div>
-                    <div
-                      className={cx(
-                        "userOption__item userOption__item__border"
-                      )}
-                    >
-                      <p>
-                        <Link to={"/userEventManager"}>
-                          <BiTask></BiTask>Sự kiện
-                        </Link>
-                      </p>
-                      {user?.isAdmin && (
-                        <p>
-                          <Link to={"/userManager"}>
-                            <BiGroup></BiGroup>Quản lí người dùng
-                          </Link>
-                        </p>
-                      )}
-
-                      <p onClick={handleNotify}>
-                        <BiCog></BiCog>Tùy chọn
-                      </p>
-                    </div>
-                    <div className={cx("userOption__item")}>
-                      <p onClick={handleLogout}>
-                        <BiLogOut></BiLogOut>Thoát
-                      </p>
-                    </div>
-                  </div>
-                )}
-              >
-                <div
-                  className={cx("header__service__item__name")}
-                  onClick={() => setShowUserOption(!showUserOption)}
-                >
-                  <span className={cx("user_name")}>{user.email}</span>
-                  <BiCaretDown></BiCaretDown>
-                </div>
-              </TippyHeadless>
-            </div>
-          )}
+          {/* Quản lí của người dùng */}
+          {user && <UserActive user={user} handleLogout={handleLogout} />}
           {/* <div className={cx("header__service__item")}>
             <div className={cx("header__service__item__avt")}>
               <img
@@ -196,101 +107,17 @@ function Header() {
       </header>
       <nav className={cx("nav")}>
         <ul className={cx("nav__list")}>
-          <li
-            className={cx("nav__list__item", {
-              active: currentPage === "/home",
-            })}
-          >
-            <Link to={"/home"}>
-              {currentLang === "vi" ? "Trang chủ" : "Home"}
-            </Link>
-          </li>
-
-          {!user && (
-            <li
-              className={cx("nav__list__item", {
-                active: currentPage === "/register",
-              })}
-            >
-              <Link to={"/register"}>
-                {currentLang === "vi" ? "Đăng ký" : "Register"}
-              </Link>
-            </li>
-          )}
-          {!user && (
-            <li
-              className={cx("nav__list__item", {
-                active: currentPage === "/",
-              })}
-            >
-              <Link to={"/"}>
-                {currentLang === "vi" ? "Đăng nhập" : "Login"}
-              </Link>
-            </li>
-          )}
-
+          <NavHome currentLang={currentLang} currentPage={currentPage} />
+          <NavPosts currentLang={currentLang} currentPage={currentPage} />
+          {!user && [
+            <NavRegister currentPage={currentPage} currentLang={currentLang} />,
+            <NavLogin currentPage={currentPage} currentLang={currentLang} />,
+          ]}
           {user && (
-            <li
-              className={cx("nav__list__item", {
-                active: currentPage === "/map",
-              })}
-            >
-              <Link to={"/map"}>{currentLang === "vi" ? "Bản đồ" : "Map"}</Link>
-            </li>
+            <NavMap currentPage={currentPage} currentLang={currentLang} />
           )}
-          <li
-            className={cx("nav__list__item tienIch", {
-              activeTienIch: currentPage === "/map",
-            })}
-            onClick={() => setShowTienIch(!showTienIch)}
-          >
-            <TippyHeadless
-              interactive
-              visible={showTienIch}
-              onClickOutside={() => setShowTienIch(!showTienIch)}
-              render={(props) => (
-                <div
-                  tabIndex="-1"
-                  {...props}
-                  className={cx("nav__list__item__tienIch")}
-                >
-                  <Button
-                    variant="danger"
-                    onClick={() => {
-                      setShowEmptySeat(!showEmptySeat);
-                    }}
-                  >
-                    Các ghế còn trống
-                  </Button>
-                  <Button
-                    variant="success"
-                    onClick={() => {
-                      setShowSeat(!showSeat);
-                    }}
-                  >
-                    Các ghế đã đăng ký
-                  </Button>
-
-                  <Button
-                    variant="secondary"
-                    onClick={() => {
-                      setShowSeat(false);
-                      setShowEmptySeat(false);
-                      localStorage.setItem("tienIch", JSON.stringify(false));
-                    }}
-                  >
-                    Xóa tiện ích
-                  </Button>
-                </div>
-              )}
-            >
-              <div>
-                {currentLang === "vi" ? "Tiện ích" : "Convenient"}
-                <BiCaretDown></BiCaretDown>
-              </div>
-            </TippyHeadless>
-          </li>
-
+          <NavTienIch currentPage={currentPage} currentLang={currentLang} />
+          {/* Sắp xếp */}
           {user?.isAdmin && (
             <li
               className={cx("nav__list__item", {
@@ -302,48 +129,18 @@ function Header() {
               </Link>
             </li>
           )}
-
-          {/* {user?.isAdmin && (
-            <li
-              className={cx("nav__list__item", {
-                active: currentPage === "updateGraList",
-              })}
-              onClick={() => setCurrentPage("updateGraList")}
-            >
-              <Link to={"/updateGraList"}>
-                {currentLang === "vi"
-                  ? "Cập nhật danh sách tốt nghiệp"
-                  : "Update Graduation List"}
-              </Link>
-            </li>
-          )} */}
-
           {user && (
-            <li
-              className={cx("nav__list__item", {
-                active: currentPage === "/registerSeat",
-              })}
-            >
-              <Link to={"/registerSeat"}>
-                {currentLang === "vi"
-                  ? "Đăng kí tham gia sự kiện"
-                  : "Register for the event"}
-              </Link>
-            </li>
+            <NavRegisterSeat
+              currentPage={currentPage}
+              currentLang={currentLang}
+            />
           )}
-
-          {(user?.isAdmin || user?.role === "giangVien") && (
-            <li
-              className={cx("nav__list__item", {
-                active: currentPage === "/createEvent",
-              })}
-            >
-              <Link to={"/createEvent"}>
-                {currentLang === "vi" ? "Tạo sự kiện" : "Create event"}
-              </Link>
-            </li>
+          {!params.login && (user?.isAdmin || user?.role === "giangVien") && (
+            <NavCreatEnvent
+              currentPage={currentPage}
+              currentLang={currentLang}
+            />
           )}
-
           {user?.isAdmin && (
             <li
               className={cx("nav__list__item", {
@@ -355,57 +152,17 @@ function Header() {
               </Link>
             </li>
           )}
-
-          <div
-            className={cx("nav__list__item language")}
-            onClick={() => setShowLang(!showLang)}
-          >
-            <TippyHeadless
-              interactive
-              visible={showLang}
-              onClickOutside={() => setShowLang(!showLang)}
-              render={(props) => (
-                <div
-                  tabIndex="-1"
-                  {...props}
-                  className={cx("nav__list__item__tienIch")}
-                >
-                  <Button
-                    variant="success"
-                    onClick={() =>
-                      localStorage.setItem("language", JSON.stringify("vi"))
-                    }
-                  >
-                    Vietnamese (vi)
-                  </Button>
-                  <Button
-                    variant="success"
-                    onClick={() =>
-                      localStorage.setItem("language", JSON.stringify("en"))
-                    }
-                  >
-                    English (en)
-                  </Button>
-                </div>
-              )}
-            >
-              <div>
-                {currentLang === "vi" ? "Vietnamese (vi)" : "English (en)"}
-                <BiCaretDown></BiCaretDown>
-              </div>
-            </TippyHeadless>
-          </div>
-        </ul>
-        <div className={cx("nav__search")}>
-          <input
-            value={searchVal}
-            onChange={(e) => setSearchVal(e.target.value)}
-            className={cx("nav__search__box")}
-            placeholder="Nhập mssv để tìm vị trí"
-            spellCheck="false"
+          <NavLanguage
+            showLang={showLang}
+            setShowLang={setShowLang}
+            currentLang={currentLang}
           />
-          <BiSearch onClick={handleSearch}></BiSearch>
-        </div>
+        </ul>
+        <NavSearch
+          searchVal={searchVal}
+          setSearchVal={setSearchVal}
+          handleSearch={handleSearch}
+        />
       </nav>
     </div>
   );

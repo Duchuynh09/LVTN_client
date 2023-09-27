@@ -5,6 +5,7 @@
   background-color: $second-color;
   height: 60px;
   border-top: 4px solid $main-color;
+
   &__contact {
     @include flex(center, center);
 
@@ -69,7 +70,7 @@
         }
         &:hover:nth-child(4) {
           background-color: rgb(52, 86, 126);
-          
+
           svg {
             color: $txt-white;
           }

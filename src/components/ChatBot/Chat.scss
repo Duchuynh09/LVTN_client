@@ -1,0 +1,106 @@
+@use "../../scss/" as *;
+
+.chatbot-window {
+  background-size: contain;
+  bottom: 70px;
+  right: 10vw;
+  z-index: 99;
+  position: fixed;
+  min-width: 300px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  display: none;
+  opacity: 1;
+}
+
+.chatbot-messages {
+  display: flex;
+  flex-direction: column-reverse;
+  height: 300px;
+  overflow-y: scroll;
+  padding: 10px;
+}
+
+.message {
+  display: flex;
+}
+
+.message.user {
+  color: #fff;
+  margin-left: 50px;
+  justify-content: flex-end;
+}
+.message.bot {
+  justify-content: flex-start;
+  margin-right: 50px;
+}
+.content {
+  padding: 8px;
+  margin: 5px;
+  border-radius: 5px;
+}
+
+.message.bot .content {
+  background-color: #f0f0f0;
+}
+
+.message.user .content {
+  background-color: $main-color;
+}
+.message-input {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+input[type="text"] {
+  flex: 1;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+button {
+  color: #fff !important;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.chatbot-window.open {
+  display: block;
+}
+
+.chatbot-toggle-button {
+  background-color: $main-color !important;
+  position: fixed;
+  bottom: 15px;
+  right: 10%;
+  background-color: #007bff;
+  color: #fff;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.chatbot-toggle-button:active {
+  transform: rotate(180deg);
+}
+
+.btn-send {
+  background-color: $main-color;
+}
+
+// .anticon-close {
+//   animation: toggle 0.5;
+// }
+// @keyframes toggle {
+//   0% {
+//     transform: rotate(0deg);
+//   }
+//   100% {
+//     transform: rotate(180deg);
+//   }
+// }

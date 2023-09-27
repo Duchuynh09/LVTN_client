@@ -1,9 +1,8 @@
 import { Container, Form, Button } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useParams, useNavigate } from "react-router-dom";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import classnames from "classnames/bind";
-
 import signInApi from "../../api/signInApi";
 import style from "./Login.scss";
 import ModalContext from "../../store/ModalContext";
@@ -19,20 +18,46 @@ function Login() {
   const ModalContextt = useContext(ModalContext);
   const DataContextt = useContext(DataContext);
 
-
+  useEffect(() => {
+    const checkLogin = () => {
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (user) {
+        if (user.isAdmin && param.login) {
+          navigate("/home");
+        }
+        if (!user.isAdmin && !param.login) {
+          navigate("/home");
+        }
+      }
+    };
+    checkLogin();
+  }, [navigate, param]);
   const handleSignIn = async () => {
     if (param.login) {
+      var currentDate = new Date();
+      // Thêm 30 ngày
+      currentDate.setMonth(currentDate.getMonth() + 1);
+
+      // Chuyển ngày thành chuỗi ngày tháng hết hạn (GMT)
+      var expires = currentDate.toUTCString();
+      // Trang login admin mới có param login
       if (param.login === "login") {
         try {
           const check = await signInApi.signInAdmin({
             email,
             password,
           });
+          const { id, ...info } = check.user;
           if (check.state === "success") {
-            localStorage.setItem("user", JSON.stringify(check.user));
+            localStorage.setItem("user", JSON.stringify({ ...info }));
             localStorage.setItem("token", JSON.stringify(check.token));
-            document.cookie = `token = ${JSON.stringify(check.token)}`;
-            DataContextt.setIsAdmin(true)
+            document.cookie = `token = ${JSON.stringify(
+              check.token
+            )};expires=${expires}; path=/`;
+            document.cookie = `id = ${JSON.stringify(
+              id
+            )};expires=${expires}; path=/`;
+            DataContextt.setIsAdmin(true);
             navigate("/home");
           } else {
             ModalContextt.setShow(true);
@@ -51,11 +76,16 @@ function Login() {
           email,
           password,
         });
-
+        const { id, ...info } = check.user;
         if (check.state === "success") {
-          localStorage.setItem("user", JSON.stringify(check.user));
+          localStorage.setItem("user", JSON.stringify({ ...info }));
           document.cookie = `token = ${JSON.stringify(check.token)}`;
-          localStorage.setItem("token", JSON.stringify(check.token));
+          document.cookie = `token = ${JSON.stringify(
+            check.token
+          )};expires=${expires}; path=/`;
+          document.cookie = `id = ${JSON.stringify(
+            id
+          )};expires=${expires}; path=/`;
           navigate("/home");
         } else {
           ModalContextt.setShow(true);
@@ -103,7 +133,6 @@ function Login() {
             <p className="text-center m-2">Hoặc</p>
             <Button
               variant="outline-primary"
-          
               className={cx("register", "w-100")}
             >
               <Link to={"/register"}>Đăng ký ngay</Link>

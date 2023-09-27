@@ -1,19 +1,19 @@
 import classNames from "classnames/bind";
 
 import style from "./SeatList.scss";
-
+import { Tooltip, Card } from "antd";
 const cx = classNames.bind(style);
 
 function SeatList({ Array, nameArray = "" }) {
-  const tmpArray = []; 
-  
-    for (let index = 0; index < Array[0]; index++) {
-      if (Array[index + 1]) {
-        tmpArray.push(Array[index + 1].mssv);
-      } else {
-        tmpArray.push(undefined);
-      }
+  const tmpArray = [];
+
+  for (let index = 0; index < Array[0]; index++) {
+    if (Array[index + 1]) {
+      tmpArray.push(Array[index + 1].mssv);
+    } else {
+      tmpArray.push(undefined);
     }
+  }
   return (
     <div className={cx("seat-container__list")}>
       <div className={cx("seat-container__list__item", "reverse")}>
@@ -27,14 +27,28 @@ function SeatList({ Array, nameArray = "" }) {
           let index = i + 1;
           if (index % 2 > 0 && index < Array[0]) {
             return (
-              <div id={item} className={cx("seat__row", empty)} key={index}>
-                <span
-                  className={cx("seat__row__item")}
-                  name={nameArray + index}
-                >
-                  {index}
-                </span>
-              </div>
+              <Tooltip
+                color="none"
+                title={
+                  item ? (
+                    <Card title={`${nameArray}[${index}]`}>
+                      Mã số: {item}
+                      <p></p>
+                    </Card>
+                  ) : (
+                    <Card title={`${nameArray}[${index}]`}></Card>
+                  )
+                }
+              >
+                <div id={item} className={cx("seat__row", empty)} key={index}>
+                  <span
+                    className={cx("seat__row__item")}
+                    name={nameArray + index}
+                  >
+                    {index}
+                  </span>
+                </div>
+              </Tooltip>
             );
           }
         })}
@@ -51,14 +65,28 @@ function SeatList({ Array, nameArray = "" }) {
           let index = i + 1;
           if (index % 2 === 0) {
             return (
-              <div id={item} className={cx("seat__row", empty)} key={index}>
-                <span
-                  className={cx("seat__row__item")}
-                  name={`${nameArray}${index}`}
-                >
-                  {index}
-                </span>
-              </div>
+              <Tooltip
+                color="none"
+                title={
+                  item ? (
+                    <Card title={`${nameArray}[${index}]`}>
+                      Mã số: {item}
+                      <p></p>
+                    </Card>
+                  ) : (
+                    <Card title={`${nameArray}[${index}]`}></Card>
+                  )
+                }
+              >
+                <div id={item} className={cx("seat__row", empty)} key={index}>
+                  <span
+                    className={cx("seat__row__item")}
+                    name={`${nameArray}${index}`}
+                  >
+                    {index}
+                  </span>
+                </div>
+              </Tooltip>
             );
           }
         })}

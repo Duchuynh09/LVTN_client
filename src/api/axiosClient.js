@@ -10,7 +10,13 @@ const axiosClient = axios.create({
   },
   paramsSerializer: (params) => queryString.stringify({ ...params }),
 });
-
+const axiosChatBotClient = axios.create({
+  baseURL: apiConfig.chatBotUrl,
+  headers: {
+    "Content-Type": "application/json",
+  },
+  paramsSerializer: (params) => queryString.stringify({ ...params }),
+});
 const axiosClientJWT = axios.create({
   baseURL: apiConfig.baseUrl,
   headers: {
@@ -18,10 +24,11 @@ const axiosClientJWT = axios.create({
   },
   paramsSerializer: (params) => queryString.stringify({ ...params }),
 });
-
+// Có token trên Web mới có thể gọi được
 axiosClientJWT.interceptors.request.use(async (config) => {
-  config.headers.authorization =  'Beaer ' + JSON.parse(localStorage.getItem("token"))
-  return config
+  config.headers.authorization =
+    "Beaer " + JSON.parse(localStorage.getItem("token"));
+  return config;
 });
 
 axiosClient.interceptors.request.use(async (config) => config);
@@ -45,10 +52,11 @@ axiosClientJWT.interceptors.response.use(
       return response.data;
     }
     return response;
-  } , (error) => {
-    throw new Error(error);
+  },
+  (error) => {
+    throw new Error(error.message);
   }
 );
 
 export default axiosClient;
-export  {axiosClientJWT}
+export { axiosClientJWT, axiosChatBotClient };

@@ -1,4 +1,4 @@
-import  { axiosClientJWT } from "./axiosClient";
+import { axiosClientJWT } from "./axiosClient";
 
 const eventApi = {
   getDssvCoTheDangKy: (id) => {
@@ -43,23 +43,23 @@ const eventApi = {
   },
   getEventsJoin: (payload) => {
     const url = `dssv/getEventsJoin/`;
-    return axiosClientJWT.post(url,payload);
+    return axiosClientJWT.post(url, payload);
   },
   getEventsMake: (payload) => {
     const url = `dssv/getEventsMake/`;
-    return axiosClientJWT.post(url,payload);
+    return axiosClientJWT.post(url, payload);
   },
   softList: (payload) => {
     const url = `dssv/softList/${payload.idEvent}`;
-    return axiosClientJWT.post(url,payload);
+    return axiosClientJWT.post(url, payload);
   },
   generateFile: (payload) => {
     const url = `dssv/generateFile/${payload.idEvent}`;
-    return axiosClientJWT.post(url,payload);
+    return axiosClientJWT.post(url, payload);
   },
   addDataCTDK: (payload) => {
     const url = `dssv/addDataCTDK/${payload.idEvent}`;
-    return axiosClientJWT.post(url,payload);
+    return axiosClientJWT.post(url, payload);
   },
 };
 

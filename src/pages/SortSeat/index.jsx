@@ -103,11 +103,11 @@ function SortSeat() {
     };
     fetchOptionEvent();
   }, []);
-
   const handleSelectOption = (item, index) => {
     setOptionTitle(item.name + " ( " + item.date); // title cua su kien duoc chon
     setIndexOpSelect(index);
     DataContextt.setIdEvent(item._id);
+    setSpData(item.dsDaDangKy);
   };
 
   const sortSample = (type) => {
@@ -147,14 +147,14 @@ function SortSeat() {
 
     const softApi = async () => {
       const payload = {
-        idEvent : DataContextt.idEvent,
+        idEvent: DataContextt.idEvent,
         az,
-        type
-      }
+        type,
+      };
       const res = await eventApi.softList(payload);
       console.log(res.state);
     };
-    softApi()
+    softApi();
   };
 
   return (
@@ -199,7 +199,8 @@ function SortSeat() {
         <div className="sort-seat__main">
           <ul className="sort-seat__main__list reverse">
             {spData.map((item) => {
-              if (item.id % 2 > 0) {
+              // Đổi điều kiện lại
+              if ((item.id ? item.id : item.mssv.slice(-1)) % 2 > 0) {
                 return (
                   <li key={item.mssv}>
                     <p className={cx("text-center")}>Vị trí {item.id}</p>
@@ -216,7 +217,7 @@ function SortSeat() {
           <div className="sort-seat__main__space text-center">B</div>
           <ul className="sort-seat__main__list">
             {spData.map((item) => {
-              if (item.id % 2 === 0) {
+              if ((item.id ? item.id : item.mssv.slice(-1)) % 2 === 0) {
                 return (
                   <li key={item.mssv}>
                     <p className={cx("text-center")}>Vị trí {item.id}</p>
@@ -233,20 +234,20 @@ function SortSeat() {
         </div>
       </div>
       <div className="sort-seat__control">
-        <Button onClick={()=>handleSoftList("mssv")}>
+        <Button onClick={() => handleSoftList("mssv")}>
           Sắp theo mã số đinh viên
           {az ? <BiSortAZ></BiSortAZ> : <BiSortZA></BiSortZA>}
         </Button>
 
-        <Button onClick={()=>handleSoftList("lop")}>
+        <Button onClick={() => handleSoftList("lop")}>
           Sắp theo lớp {az ? <BiSortAZ></BiSortAZ> : <BiSortZA></BiSortZA>}
         </Button>
 
-        <Button onClick={()=>handleSoftList("nghanh")}>
+        <Button onClick={() => handleSoftList("nghanh")}>
           Sắp theo nghành {az ? <BiSortAZ></BiSortAZ> : <BiSortZA></BiSortZA>}
         </Button>
 
-        <Button onClick={()=>handleSoftList("maDonVi")}>
+        <Button onClick={() => handleSoftList("maDonVi")}>
           Sắp theo đơn vị {az ? <BiSortAZ></BiSortAZ> : <BiSortZA></BiSortZA>}
         </Button>
       </div>

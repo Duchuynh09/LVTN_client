@@ -1,0 +1,25 @@
+.sc-user-input--text {
+  width: 380px;
+  resize: none;
+  border: none;
+  outline: none;
+  border-bottom-left-radius: 10px;
+  box-sizing: border-box;
+  padding: 18px;
+  margin-right: 24px;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.33;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  color: #565867;
+  -webkit-font-smoothing: antialiased;
+  max-height: 200px;
+  overflow: hidden !important;
+  bottom: 0;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+.sc-chat-window {
+  z-index: 100;
+}

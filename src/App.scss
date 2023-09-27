@@ -45,13 +45,15 @@ button {
 }
 
 .wrapper {
-  margin: 0 70px;
+  padding: 0 70px;
   box-shadow: $box-shadow;
+  // @include tablet {
+  //    padding: 0 30px;
+  // }
+}
 
-  @include tablet {
-    margin: 0 30px;
-  }
-
+.wrapper > .ant-layout {
+  background: none !important;
 }
 
 //custom modal
@@ -75,7 +77,6 @@ button {
   padding: 0 20px;
   word-wrap: break-word;
 }
-
 
 .modal-header {
   border: unset;

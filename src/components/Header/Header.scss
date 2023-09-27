@@ -4,8 +4,7 @@
   @include flex(center, space-between);
   margin-top: 25px;
   border-top: 4px solid $main-color;
-  padding: 0 20px;
-
+  padding: 0 30px;
   &__logo {
     height: 90px;
     width: 347px;
@@ -73,7 +72,6 @@
   background-color: $second-bg;
   color: $txt-white;
   height: $nav-height;
-
   @include mobile {
     height: 20px;
   }
@@ -151,7 +149,6 @@
 
     &__item.active {
       background-color: $main-color;
-      
     }
   }
 
@@ -171,8 +168,11 @@
       opacity: 1;
       width: 200px;
       background-color: #4e585d;
-
+      @include mobile-tablet {
+        transform: translateX(0+50px);
+      }
       @include mobile {
+        transform: translateX(0+20px);
         width: 80px;
         font-size: 0.5rem;
       }
@@ -225,9 +225,7 @@
 
 .userOption {
   background-color: $main-bg;
-  width: 180px;
   border: 1px solid $txt-gray;
-
   &__item {
     margin-bottom: 5px;
     padding: 5px;
@@ -246,11 +244,13 @@
       font-size: 1.4rem;
       width: 25px;
     }
-
   }
 
   &__item__border {
     border-top: 1px solid $txt-gray;
     border-bottom: 1px solid $txt-gray;
   }
+}
+.ant-select-selection-placeholder {
+  color: $txt-white !important;
 }

@@ -1,0 +1,43 @@
+.posts {
+  display: flex;
+  justify-content: center;
+  padding: 10px 10em;
+}
+.custom-scroll-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 15%;
+  width: 100%;
+  min-height: 100vh; /* Set a maximum height */
+  overflow-y: scroll; /* Display vertical scrollbar when needed */
+  overflow-x: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+  border-radius: 4px; /* Round the corners */
+}
+/* Style the scrollbar track */
+.custom-scroll-container::-webkit-scrollbar {
+  width: 10px; /* Set the width of the scrollbar */
+}
+
+/* Style the scrollbar thumb (the draggable part) */
+.custom-scroll-container::-webkit-scrollbar-thumb {
+  background-color: #888; /* Set the background color of the thumb */
+  border-radius: 20px; /* Round the corners of the thumb */
+}
+
+/* Style the scrollbar thumb on hover */
+.custom-scroll-container::-webkit-scrollbar-thumb:hover {
+  background-color: #555; /* Change the background color on hover */
+}
+
+/* Style the scrollbar track when it's not actively being interacted with */
+.custom-scroll-container::-webkit-scrollbar-track {
+  background-color: #f1f1f1; /* Set the background color of the track */
+}
+.ant-list-header {
+  // opacity: 0.3;
+  width: 100%;
+  background-color: #3a454b !important;
+  border-radius: 30% 30% 0 0;
+}

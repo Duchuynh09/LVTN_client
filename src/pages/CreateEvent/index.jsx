@@ -62,21 +62,21 @@ function CreateEvent() {
         time: radioTimeCheck,
         specialSeat: specialSeatCheck,
       };
-  
+
       const createPendingEvent = async () => {
         const res = await eventApi.createPendingEvent(payload);
-  
+
         if (res.state === "success") {
           ModalConTextt.setShow(true);
           ModalConTextt.setMess(
             "Tạo thành công, chúng tôi sẽ xem xét và liên hệ với bạn qua email!"
           );
           ModalConTextt.setType("success");
-        } else { 
+        } else {
           ModalConTextt.setShow(true);
           ModalConTextt.setMess("Có lỗi xảy ra, vui lòng đăng ký lại!");
           ModalConTextt.setType("danger");
-        } 
+        }
       };
       createPendingEvent();
     }

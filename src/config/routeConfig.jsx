@@ -1,4 +1,3 @@
-
 import {
   Home,
   Login,
@@ -10,21 +9,35 @@ import {
   EventManager,
   CreateEvent,
   UserEventManager,
-  UserManager,FeedBack
+  UserManager,
+  FeedBack,
+  Profile,
+  Posts,
+  Post,
+  UserPostManager,
 } from "../pages";
 import routes from "../routes";
 
 const publicRoute = [
+  { path: routes.profile, element: <Profile /> },
   { path: routes.home, element: <Home></Home> },
+  { path: routes.posts, element: <Posts></Posts> },
+  { path: routes.post, element: <Post></Post> },
   { path: routes.map, element: <Map></Map> },
   { path: routes.login, element: <Login></Login> },
   { path: routes.adminLogin, element: <Login></Login> },
   { path: routes.register, element: <Register></Register> },
   { path: routes.registerSeat, element: <RegisterSeat></RegisterSeat> },
-  { path: routes.userEventManager, element: <UserEventManager></UserEventManager> },
+  {
+    path: routes.userEventManager,
+    element: <UserEventManager></UserEventManager>,
+  },
+  {
+    path: routes.userPostManager,
+    element: <UserPostManager></UserPostManager>,
+  },
   { path: routes.feedBack, element: <FeedBack></FeedBack> },
   { path: routes.createEvent, element: <CreateEvent></CreateEvent> },
-
 ];
 
 const privateRoute = [

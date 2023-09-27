@@ -81,11 +81,13 @@ function EventManager() {
   const handleNoAccept = (idEvent) => {
     const deletePendingEvent = async () => {
       if (optionShow === "DXL") {
+        // CÁI NÀY LÀ XÓA
         const res = await eventApi.deleteEvent(idEvent);
         if (res.state === "success") {
           setCallApi(!callApi);
         }
       } else {
+        // CÁI NÀY LÀ KHÔNG DUYỆT
         const res = await eventApi.deletePendingEvent(idEvent);
 
         if (res.state === "success") {
@@ -125,17 +127,17 @@ function EventManager() {
 
   const handleCreateFile = (id, year) => {
     const handleApi = async () => {
-        const payload = {
-          idEvent: id,
-        };
+      const payload = {
+        idEvent: id,
+      };
       const payload2 = {
         idEvent: id,
         date: year,
       };
       const res = await eventApi.generateFile(payload);
       if (res.state === "success") {
-      const res2 = await eventApi.addDataCTDK(payload2);
-      console.log(res2);
+        const res2 = await eventApi.addDataCTDK(payload2);
+        console.log(res2);
       }
     };
     handleApi();
