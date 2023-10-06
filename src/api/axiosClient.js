@@ -44,6 +44,18 @@ axiosClient.interceptors.response.use(
     throw new Error(error);
   }
 );
+axiosChatBotClient.interceptors.response.use(
+  (response) => {
+    if (response && response.data) {
+      // console.log(response);
+      return response.data;
+    }
+    return response;
+  },
+  (error) => {
+    throw new Error(error);
+  }
+);
 
 axiosClientJWT.interceptors.response.use(
   (response) => {

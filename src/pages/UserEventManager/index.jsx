@@ -1,4 +1,4 @@
-import {  useEffect,  useState } from "react";
+import { useEffect, useState } from "react";
 import Table from "react-bootstrap/Table";
 import eventApi from "../../api/eventApi";
 import { Button } from "react-bootstrap";
@@ -30,10 +30,8 @@ const UserEventManager = () => {
       };
       fectEventsMake();
     }
-
     fectEventsJoin();
   }, [user.email, user.role]);
-
   return (
     <div className="wrapper">
       {dataJoin.length > 0 && (
@@ -83,32 +81,33 @@ const UserEventManager = () => {
               </tr>
             </thead>
             <tbody>
-              {dataMake?.map((item, index) => {
-                const wasCreatePost = state.posts.find(
-                  (post) => post.event._id === item.id
-                );
-                return (
-                  <tr key={index}>
-                    <td>{index + 1}</td>
-                    <td>{item.name}</td>
-                    <td>{item.date}</td>
-                    <td>{item.time}</td>
-                    <td>{item.limit}</td>
-                    <td className="d-flex justify-content-center">
-                      <Button
-                        style={{
-                          color: "white",
-                          backgroundColor: "#1C57A5",
-                        }}
-                        onClick={() => handleCreatePost(item)}
-                        disabled={wasCreatePost}
-                      >
-                        {wasCreatePost ? "Đã được đăng" : "Đăng bài"}
-                      </Button>
-                    </td>
-                  </tr>
-                );
-              })}
+              {dataMake &&
+                dataMake.map((item, index) => {
+                  const wasCreatePost = state.posts.find(
+                    (post) => post.event._id === item.id
+                  );
+                  return (
+                    <tr key={index}>
+                      <td>{index + 1}</td>
+                      <td>{item.name}</td>
+                      <td>{item.date}</td>
+                      <td>{item.time}</td>
+                      <td>{item.limit}</td>
+                      <td className="d-flex justify-content-center">
+                        <Button
+                          style={{
+                            color: "white",
+                            backgroundColor: "#1C57A5",
+                          }}
+                          onClick={() => handleCreatePost(item)}
+                          disabled={wasCreatePost}
+                        >
+                          {wasCreatePost ? "Đã được đăng" : "Đăng bài"}
+                        </Button>
+                      </td>
+                    </tr>
+                  );
+                })}
             </tbody>
           </Table>
         </div>

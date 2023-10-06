@@ -1,5 +1,11 @@
 import classnames from "classnames/bind";
-import { useContext, useEffect, useState } from "react";
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from "react";
 import { Container, Form, Button } from "react-bootstrap";
 
 import { useForm } from "react-hook-form";
@@ -7,15 +13,26 @@ import { useNavigate } from "react-router-dom";
 import eventApi from "../../api/eventApi";
 import ModalConText from "../../store/ModalContext";
 
-import style from "../RegisterSeat/RegisterSeat.scss"; // sài chung style với trang register seat
-const cx = classnames.bind(style);
+import devicesApi from "../../api/devicesApi";
 
+import style from "../RegisterSeat/RegisterSeat.scss"; // sài chung style với trang register seat
+import SelectDevices from "../../components/SelectDevices";
+import sponsorsApi from "../../api/sponsorApi";
+
+const cx = classnames.bind(style);
 function CreateEvent() {
+  const specialSeatCheckFirst = ["A", "B", "C", "D", "E", "F", "G", "H"];
+  const specialSeatCheckSencond = ["I", "K", "L", "M", "N", "O", "P", "Q"];
+  const specialSeatCheckThird = ["R", "S", "T", "u", "v", "x", "Y", "Z"];
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
+  const [deviceOptions, setDeviceOptions] = useState([]);
+  const [deviceSelected, setDeviceSeleted] = useState([]);
+  const [sponsorOptions, setSponsorOptions] = useState([]);
+  const [sponsorSelected, setSponsorSeleted] = useState([]);
 
   const next = useNavigate();
 
@@ -26,11 +43,53 @@ function CreateEvent() {
   const [radioTimeCheck, setRadioTimeCheck] = useState("Sáng");
   const [specialSeatCheck, setSpecialSeatCheck] = useState([]);
 
+  const changeQuantity = (key, quantity) => {
+    const newArray = [...deviceOptions];
+    const newOption = newArray.find((item) => item.key === key);
+    if (newOption) {
+      newOption.quantity = quantity;
+      setDeviceOptions(newArray);
+    } else {
+      ModalConTextt.setShow(true);
+      ModalConTextt.setMess("Lỗi khi tìm thiết bị để tằng số lượng");
+      ModalConTextt.setType("danger");
+    }
+  };
+
+  const getOption = useCallback(async () => {
+    const devices = await devicesApi.getAllDevice();
+    setDeviceOptions(
+      devices.map((device) => ({
+        label: device.name,
+        value: device.name,
+        key: device._id,
+        quantity: 1,
+        max: device.stock,
+      }))
+    );
+    const sponsors = await sponsorsApi.getAllSponsor();
+    setSponsorOptions(
+      sponsors.map((sponsor) => ({
+        label: sponsor.name,
+        value: sponsor.name,
+        key: sponsor._id,
+      }))
+    );
+  }, []);
+  useLayoutEffect(() => {
+    getOption();
+  }, [getOption]);
+  function handleDiviceSelectedChange(values) {
+    setDeviceSeleted(values);
+  }
+  function handleSponsorSelectedChange(values) {
+    setSponsorSeleted(values);
+  }
   useEffect(() => {
     if (user.role === "sinhVien") {
       next("/home");
     }
-  }, []);
+  }, [user, next]);
 
   const handleCheckSeat = (value, checked) => {
     if (!checked) {
@@ -46,14 +105,12 @@ function CreateEvent() {
   const submit = (data) => {
     const selectDay = new Date(data.date);
     const today = new Date();
-
     if (selectDay.getTime() < today.getTime()) {
       ModalConTextt.setShow(true);
       ModalConTextt.setMess("Xin vui lòng chọn ngày diễn ra trong tương lai!");
       ModalConTextt.setType("danger");
     } else {
       // console.log("ngay ban chon ok");
-
       let payload = {
         name: data.name,
         author: data.email,
@@ -61,6 +118,8 @@ function CreateEvent() {
         limit: radioCheck === "all" ? radioCheck : data.linkDs,
         time: radioTimeCheck,
         specialSeat: specialSeatCheck,
+        devices: deviceOptions,
+        sponsors: sponsorOptions,
       };
 
       const createPendingEvent = async () => {
@@ -135,7 +194,25 @@ function CreateEvent() {
                 <p className="text-danger">Vui lòng kiểm tra lại email!</p>
               )}
             </Form.Group>
-
+            <Form.Group className="mb-3" controlId="formBasicEmail">
+              <SelectDevices
+                title={"thiết bị để mượn"}
+                selected={deviceSelected}
+                handleChange={handleDiviceSelectedChange}
+                options={deviceOptions}
+                changeQuantity={changeQuantity}
+              />
+              <SelectDevices
+                title={"nhà tài trợ"}
+                selected={sponsorSelected}
+                handleChange={handleSponsorSelectedChange}
+                isDevice={false}
+                options={sponsorOptions}
+                changeQuantity={() => {
+                  console.log("not use");
+                }}
+              />
+            </Form.Group>
             <Form.Group className="mb-3" controlId="formBasicClass2">
               <span>Sự kiện diễn ra vào?</span>
               <Form.Check
@@ -170,250 +247,298 @@ function CreateEvent() {
             <Form.Group className="mb-3" controlId="formBasicClass2">
               <span>Hàng ghế nào không dành cho sinh viên?</span>
               <div className="d-flex gap-4">
-                <Form.Check
-                  type={"checkbox"}
-                  className="specialSeatCheck"
-                  name="time"
-                  value={"A"}
-                  label={`A`}
-                  onChange={(e) =>
-                    handleCheckSeat(e.target.value, e.target.checked)
-                  }
-                />
-                <Form.Check
-                  type={"checkbox"}
-                  className="specialSeatCheck"
-                  name="time"
-                  value={"B"}
-                  label={`B`}
-                  onChange={(e) =>
-                    handleCheckSeat(e.target.value, e.target.checked)
-                  }
-                />
-                <Form.Check
-                  type={"checkbox"}
-                  className="specialSeatCheck"
-                  name="time"
-                  value={"C"}
-                  label={`C`}
-                  onChange={(e) =>
-                    handleCheckSeat(e.target.value, e.target.checked)
-                  }
-                />
-                <Form.Check
-                  type={"checkbox"}
-                  className="specialSeatCheck"
-                  name="time"
-                  value={"D"}
-                  label={`D`}
-                  onChange={(e) =>
-                    handleCheckSeat(e.target.value, e.target.checked)
-                  }
-                />
-                <Form.Check
-                  type={"checkbox"}
-                  className="specialSeatCheck"
-                  name="time"
-                  value={"E"}
-                  label={`E`}
-                  onChange={(e) =>
-                    handleCheckSeat(e.target.value, e.target.checked)
-                  }
-                />
-                <Form.Check
-                  type={"checkbox"}
-                  className="specialSeatCheck"
-                  name="time"
-                  value={"F"}
-                  label={`F`}
-                  onChange={(e) =>
-                    handleCheckSeat(e.target.value, e.target.checked)
-                  }
-                />
-                <Form.Check
-                  type={"checkbox"}
-                  className="specialSeatCheck"
-                  name="time"
-                  value={"G"}
-                  label={`G`}
-                  onChange={(e) =>
-                    handleCheckSeat(e.target.value, e.target.checked)
-                  }
-                />
-                <Form.Check
-                  type={"checkbox"}
-                  className="specialSeatCheck"
-                  name="time"
-                  value={"H"}
-                  label={`H`}
-                  onChange={(e) =>
-                    handleCheckSeat(e.target.value, e.target.checked)
-                  }
-                />
+                {specialSeatCheckFirst.forEach((item) => {
+                  return (
+                    <Form.Check
+                      type={"checkbox"}
+                      className="specialSeatCheck"
+                      name="time"
+                      value={item}
+                      label={item}
+                      onChange={(e) =>
+                        handleCheckSeat(e.target.value, e.target.checked)
+                      }
+                    />
+                  );
+                })}
+                {/* <div>
+                  <Form.Check
+                    type={"checkbox"}
+                    className="specialSeatCheck"
+                    name="time"
+                    value={"A"}
+                    label={`A`}
+                    onChange={(e) =>
+                      handleCheckSeat(e.target.value, e.target.checked)
+                    }
+                  />
+                  <Form.Check
+                    type={"checkbox"}
+                    className="specialSeatCheck"
+                    name="time"
+                    value={"B"}
+                    label={`B`}
+                    onChange={(e) =>
+                      handleCheckSeat(e.target.value, e.target.checked)
+                    }
+                  />
+                  <Form.Check
+                    type={"checkbox"}
+                    className="specialSeatCheck"
+                    name="time"
+                    value={"C"}
+                    label={`C`}
+                    onChange={(e) =>
+                      handleCheckSeat(e.target.value, e.target.checked)
+                    }
+                  />
+                  <Form.Check
+                    type={"checkbox"}
+                    className="specialSeatCheck"
+                    name="time"
+                    value={"D"}
+                    label={`D`}
+                    onChange={(e) =>
+                      handleCheckSeat(e.target.value, e.target.checked)
+                    }
+                  />
+                  <Form.Check
+                    type={"checkbox"}
+                    className="specialSeatCheck"
+                    name="time"
+                    value={"E"}
+                    label={`E`}
+                    onChange={(e) =>
+                      handleCheckSeat(e.target.value, e.target.checked)
+                    }
+                  />
+                  <Form.Check
+                    type={"checkbox"}
+                    className="specialSeatCheck"
+                    name="time"
+                    value={"F"}
+                    label={`F`}
+                    onChange={(e) =>
+                      handleCheckSeat(e.target.value, e.target.checked)
+                    }
+                  />
+                  <Form.Check
+                    type={"checkbox"}
+                    className="specialSeatCheck"
+                    name="time"
+                    value={"G"}
+                    label={`G`}
+                    onChange={(e) =>
+                      handleCheckSeat(e.target.value, e.target.checked)
+                    }
+                  />
+                  <Form.Check
+                    type={"checkbox"}
+                    className="specialSeatCheck"
+                    name="time"
+                    value={"H"}
+                    label={`H`}
+                    onChange={(e) =>
+                      handleCheckSeat(e.target.value, e.target.checked)
+                    }
+                  />
+                </div> */}
               </div>
               <div className="d-flex gap-4">
-                <Form.Check
-                  type={"checkbox"}
-                  className="specialSeatCheck"
-                  name="time"
-                  value={"I"}
-                  label={`I`}
-                  onChange={(e) =>
-                    handleCheckSeat(e.target.value, e.target.checked)
-                  }
-                />
-                <Form.Check
-                  type={"checkbox"}
-                  className="specialSeatCheck"
-                  name="time"
-                  value={"K"}
-                  label={`K`}
-                  onChange={(e) =>
-                    handleCheckSeat(e.target.value, e.target.checked)
-                  }
-                />
-                <Form.Check
-                  type={"checkbox"}
-                  className="specialSeatCheck"
-                  name="time"
-                  value={"L"}
-                  label={`L`}
-                  onChange={(e) =>
-                    handleCheckSeat(e.target.value, e.target.checked)
-                  }
-                />
-                <Form.Check
-                  type={"checkbox"}
-                  className="specialSeatCheck"
-                  name="time"
-                  value={"M"}
-                  label={`M`}
-                  onChange={(e) =>
-                    handleCheckSeat(e.target.value, e.target.checked)
-                  }
-                />{" "}
-                <Form.Check
-                  type={"checkbox"}
-                  className="specialSeatCheck"
-                  name="time"
-                  value={"N"}
-                  label={`N`}
-                  onChange={(e) =>
-                    handleCheckSeat(e.target.value, e.target.checked)
-                  }
-                />{" "}
-                <Form.Check
-                  type={"checkbox"}
-                  className="specialSeatCheck"
-                  name="time"
-                  value={"O"}
-                  label={`O`}
-                  onChange={(e) =>
-                    handleCheckSeat(e.target.value, e.target.checked)
-                  }
-                />{" "}
-                <Form.Check
-                  type={"checkbox"}
-                  className="specialSeatCheck"
-                  name="time"
-                  value={"P"}
-                  label={`P`}
-                  onChange={(e) =>
-                    handleCheckSeat(e.target.value, e.target.checked)
-                  }
-                />{" "}
-                <Form.Check
-                  type={"checkbox"}
-                  className="specialSeatCheck"
-                  name="time"
-                  value={"Q"}
-                  label={`Q`}
-                  onChange={(e) =>
-                    handleCheckSeat(e.target.value, e.target.checked)
-                  }
-                />
+                {specialSeatCheckSencond.forEach((item) => {
+                  return (
+                    <Form.Check
+                      type={"checkbox"}
+                      className="specialSeatCheck"
+                      name="time"
+                      value={item}
+                      label={item}
+                      onChange={(e) =>
+                        handleCheckSeat(e.target.value, e.target.checked)
+                      }
+                    />
+                  );
+                })}
+                {/* <div>
+                  <Form.Check
+                    type={"checkbox"}
+                    className="specialSeatCheck"
+                    name="time"
+                    value={"I"}
+                    label={`I`}
+                    onChange={(e) =>
+                      handleCheckSeat(e.target.value, e.target.checked)
+                    }
+                  />
+                  <Form.Check
+                    type={"checkbox"}
+                    className="specialSeatCheck"
+                    name="time"
+                    value={"K"}
+                    label={`K`}
+                    onChange={(e) =>
+                      handleCheckSeat(e.target.value, e.target.checked)
+                    }
+                  />
+                  <Form.Check
+                    type={"checkbox"}
+                    className="specialSeatCheck"
+                    name="time"
+                    value={"L"}
+                    label={`L`}
+                    onChange={(e) =>
+                      handleCheckSeat(e.target.value, e.target.checked)
+                    }
+                  />
+                  <Form.Check
+                    type={"checkbox"}
+                    className="specialSeatCheck"
+                    name="time"
+                    value={"M"}
+                    label={`M`}
+                    onChange={(e) =>
+                      handleCheckSeat(e.target.value, e.target.checked)
+                    }
+                  />{" "}
+                  <Form.Check
+                    type={"checkbox"}
+                    className="specialSeatCheck"
+                    name="time"
+                    value={"N"}
+                    label={`N`}
+                    onChange={(e) =>
+                      handleCheckSeat(e.target.value, e.target.checked)
+                    }
+                  />{" "}
+                  <Form.Check
+                    type={"checkbox"}
+                    className="specialSeatCheck"
+                    name="time"
+                    value={"O"}
+                    label={`O`}
+                    onChange={(e) =>
+                      handleCheckSeat(e.target.value, e.target.checked)
+                    }
+                  />{" "}
+                  <Form.Check
+                    type={"checkbox"}
+                    className="specialSeatCheck"
+                    name="time"
+                    value={"P"}
+                    label={`P`}
+                    onChange={(e) =>
+                      handleCheckSeat(e.target.value, e.target.checked)
+                    }
+                  />{" "}
+                  <Form.Check
+                    type={"checkbox"}
+                    className="specialSeatCheck"
+                    name="time"
+                    value={"Q"}
+                    label={`Q`}
+                    onChange={(e) =>
+                      handleCheckSeat(e.target.value, e.target.checked)
+                    }
+                  />
+                </div> */}
               </div>
               <div className="d-flex gap-4">
-                <Form.Check
-                  type={"checkbox"}
-                  className="specialSeatCheck"
-                  name="time"
-                  value={"R"}
-                  label={`R`}
-                  onChange={(e) =>
-                    handleCheckSeat(e.target.value, e.target.checked)
-                  }
-                />
-                <Form.Check
-                  type={"checkbox"}
-                  className="specialSeatCheck"
-                  name="time"
-                  value={"S"}
-                  label={`S`}
-                  onChange={(e) =>
-                    handleCheckSeat(e.target.value, e.target.checked)
-                  }
-                />
-                <Form.Check
-                  type={"checkbox"}
-                  className="specialSeatCheck"
-                  name="time"
-                  value={"T"}
-                  label={`T`}
-                  onChange={(e) =>
-                    handleCheckSeat(e.target.value, e.target.checked)
-                  }
-                />
-                <Form.Check
-                  type={"checkbox"}
-                  className="specialSeatCheck"
-                  name="time"
-                  value={"U"}
-                  label={`U`}
-                  onChange={(e) =>
-                    handleCheckSeat(e.target.value, e.target.checked)
-                  }
-                />
-                <Form.Check
-                  type={"checkbox"}
-                  className="specialSeatCheck"
-                  name="time"
-                  value={"V"}
-                  label={`V`}
-                  onChange={(e) =>
-                    handleCheckSeat(e.target.value, e.target.checked)
-                  }
-                />
-                <Form.Check
-                  type={"checkbox"}
-                  className="specialSeatCheck"
-                  name="time"
-                  value={"X"}
-                  label={`X`}
-                  onChange={(e) =>
-                    handleCheckSeat(e.target.value, e.target.checked)
-                  }
-                />{" "}
-                <Form.Check
-                  type={"checkbox"}
-                  className="specialSeatCheck"
-                  name="time"
-                  value={"Y"}
-                  label={`Y`}
-                  onChange={(e) =>
-                    handleCheckSeat(e.target.value, e.target.checked)
-                  }
-                />{" "}
-                <Form.Check
-                  type={"checkbox"}
-                  className="specialSeatCheck"
-                  name="time"
-                  value={"Z"}
-                  label={`Z`}
-                  onChange={(e) =>
-                    handleCheckSeat(e.target.value, e.target.checked)
-                  }
-                />
+                {specialSeatCheckThird.forEach((item) => {
+                  return (
+                    <Form.Check
+                      type={"checkbox"}
+                      className="specialSeatCheck"
+                      name="time"
+                      value={item}
+                      label={item}
+                      onChange={(e) =>
+                        handleCheckSeat(e.target.value, e.target.checked)
+                      }
+                    />
+                  );
+                })}
+                {/* <div>
+                  <Form.Check
+                    type={"checkbox"}
+                    className="specialSeatCheck"
+                    name="time"
+                    value={"R"}
+                    label={`R`}
+                    onChange={(e) =>
+                      handleCheckSeat(e.target.value, e.target.checked)
+                    }
+                  />
+                  <Form.Check
+                    type={"checkbox"}
+                    className="specialSeatCheck"
+                    name="time"
+                    value={"S"}
+                    label={`S`}
+                    onChange={(e) =>
+                      handleCheckSeat(e.target.value, e.target.checked)
+                    }
+                  />
+                  <Form.Check
+                    type={"checkbox"}
+                    className="specialSeatCheck"
+                    name="time"
+                    value={"T"}
+                    label={`T`}
+                    onChange={(e) =>
+                      handleCheckSeat(e.target.value, e.target.checked)
+                    }
+                  />
+                  <Form.Check
+                    type={"checkbox"}
+                    className="specialSeatCheck"
+                    name="time"
+                    value={"U"}
+                    label={`U`}
+                    onChange={(e) =>
+                      handleCheckSeat(e.target.value, e.target.checked)
+                    }
+                  />
+                  <Form.Check
+                    type={"checkbox"}
+                    className="specialSeatCheck"
+                    name="time"
+                    value={"V"}
+                    label={`V`}
+                    onChange={(e) =>
+                      handleCheckSeat(e.target.value, e.target.checked)
+                    }
+                  />
+                  <Form.Check
+                    type={"checkbox"}
+                    className="specialSeatCheck"
+                    name="time"
+                    value={"X"}
+                    label={`X`}
+                    onChange={(e) =>
+                      handleCheckSeat(e.target.value, e.target.checked)
+                    }
+                  />
+                  <Form.Check
+                    type={"checkbox"}
+                    className="specialSeatCheck"
+                    name="time"
+                    value={"Y"}
+                    label={`Y`}
+                    onChange={(e) =>
+                      handleCheckSeat(e.target.value, e.target.checked)
+                    }
+                  />{" "}
+                  <Form.Check
+                    type={"checkbox"}
+                    className="specialSeatCheck"
+                    name="time"
+                    value={"Z"}
+                    label={`Z`}
+                    onChange={(e) =>
+                      handleCheckSeat(e.target.value, e.target.checked)
+                    }
+                  />
+                </div> */}
               </div>
             </Form.Group>
 

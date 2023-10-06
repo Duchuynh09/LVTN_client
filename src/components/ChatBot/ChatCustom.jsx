@@ -1,71 +1,4 @@
-// import React, { useState } from "react";
-// import "./Chat.scss"; // CSS file for styling
-
-// export default function ChatbotWindow() {
-//   const [messages, setMessages] = useState([]); // Lưu trữ danh sách tin nhắn
-//   const [newMessage, setNewMessage] = useState(""); // Tin nhắn người dùng đang nhập
-
-//   // Hàm để gửi tin nhắn từ người dùng
-//   function sendMessage() {
-//     if (newMessage.trim() !== "") {
-//       // Tạo một tin nhắn người dùng mới
-//       const userMessage = { text: newMessage, sender: "user" };
-//       setMessages([...messages, userMessage]);
-//       setNewMessage("");
-
-//       // Xử lý và gửi phản hồi từ chatbot
-//       handleChatbotResponse(newMessage);
-//     }
-//   }
-
-//   // Hàm để xử lý và gửi phản hồi từ chatbot (cần tùy chỉnh)
-//   function handleChatbotResponse(userMessage) {
-//     // Gửi userMessage đến server hoặc logic xử lý chatbot
-//     // Sau đó, thêm phản hồi từ chatbot vào state.messages
-//     // Ví dụ:
-//     const botMessage = { text: "Hello from the chatbot!", sender: "bot" };
-//     setMessages((prevMessages) => [...prevMessages, botMessage]);
-//   }
-
-//   // Hàm để cập nhật newMessage khi người dùng gõ
-//   function handleInputChange(e) {
-//     setNewMessage(e.target.value);
-//   }
-
-//   // Hàm để xử lý khi người dùng ấn Enter
-//   function handleKeyPress(e) {
-//     if (e.key === "Enter") {
-//       sendMessage();
-//     }
-//   }
-
-//   return (
-//     <div className="chatbot-window">
-//       <div className="chatbot-messages">
-//         {messages.map((message, index) => (
-//           <div
-//             key={index}
-//             className={`message ${message.sender === "user" ? "user" : "bot"}`}
-//           >
-//             {message.text}
-//           </div>
-//         ))}
-//       </div>
-//       <div className="message-input">
-//         <input
-//           type="text"
-//           value={newMessage}
-//           onChange={handleInputChange}
-//           onKeyPress={handleKeyPress}
-//           placeholder="Type a message..."
-//         />
-//         <button onClick={sendMessage}>Send</button>
-//       </div>
-//     </div>
-//   );
-// }
 import { bot } from "../../assets/bg";
-import { TypeAnimation } from "react-type-animation";
 import React, { useState } from "react";
 import "./Chat.scss";
 import { Button } from "antd";
@@ -74,34 +7,36 @@ import {
   CloseOutlined,
   SendOutlined,
 } from "@ant-design/icons";
+import chatBotApi from "../../api/chatBotApi";
 export default function ChatbotWindow() {
   const [isOpen, setIsOpen] = useState(false); // Trạng thái của cửa sổ chat
 
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
-  const [loading, setLoading] = useState(true);
+
   function sendMessage() {
     if (newMessage.trim() !== "") {
-      const userMessage = { text: newMessage, sender: "user" };
+      const userMessage = { sender: "user", message: newMessage };
       setMessages([userMessage, ...messages]);
       setNewMessage("");
-      handleChatbotResponse(newMessage);
+      handleChatbotResponse(userMessage);
     }
   }
 
-  function handleChatbotResponse(userMessage) {
-    let botMessage = {};
-    setTimeout(async () => {
-      botMessage = await { text: "Hello from the chatbot!", sender: "bot" };
-      setMessages((prevMessages) => {
-        const listMes = [...prevMessages];
-        listMes.shift();
-        return [botMessage, ...listMes];
-      });
-    }, 2000);
-    const waitRespone = { text: "đang xử lý", sender: "bot" };
-    if (!botMessage.text) {
+  async function handleChatbotResponse(userMessage) {
+    try {
+      const waitRespone = { message: "...", sender: "bot" };
       setMessages((prevMessages) => [waitRespone, ...prevMessages]);
+      const BOTRespone = await chatBotApi.sendMess(JSON.stringify(userMessage));
+      console.log(BOTRespone);
+      // let botMessage = await { message: BOTRespone[0].text, sender: "bot" };
+      // setMessages((prevMessages) => {
+      //   const listMes = [...prevMessages];
+      //   listMes.shift();
+      //   return [botMessage, ...listMes];
+      // });
+    } catch (error) {
+      console.log(error.message);
     }
   }
 
@@ -137,15 +72,13 @@ export default function ChatbotWindow() {
         className={`chatbot-window ${isOpen ? "open" : "closed"}`}
       >
         <div className={"chatbot-messages"}>
-          {messages.map((message, index) => (
+          {messages.map(({ message, sender }, index) => (
             <>
               <div
                 key={index}
-                className={`message ${
-                  message.sender === "user" ? "user" : "bot"
-                }`}
+                className={`message ${sender === "user" ? "user" : "bot"}`}
               >
-                <div className="content">{message.text}</div>
+                <div className="content">{message}</div>
               </div>
             </>
           ))}

@@ -106,7 +106,11 @@ export default function PostCreate({ idEvent, handleCancel, openModal }) {
           )}
         </Upload>
         <hr />
-        <Form.Item>
+        <Form.Item
+          style={{
+            color: "black",
+          }}
+        >
           <Typography>
             <Title style={{ textAlign: "center", marginTop: 10 }} level={3}>
               Nhập thông tin chính của bài viết

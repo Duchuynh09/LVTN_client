@@ -18,13 +18,11 @@ const cx = classnames.bind(style);
 function EventManager() {
   // bootstrap state
   const [show, setShow] = useState(false);
-
   const handleClose = () => setShow(false);
   const handleShow = (id) => {
     setShow(true);
     setIdEvent(id);
   };
-
   // state
   const [dataEvent, setDataEvent] = useState();
   const [callApi, setCallApi] = useState(false);
@@ -77,12 +75,12 @@ function EventManager() {
     };
     createEvt();
   };
-
   const handleNoAccept = (idEvent) => {
     const deletePendingEvent = async () => {
       if (optionShow === "DXL") {
         // CÁI NÀY LÀ XÓA
         const res = await eventApi.deleteEvent(idEvent);
+
         if (res.state === "success") {
           setCallApi(!callApi);
         }
@@ -195,6 +193,7 @@ function EventManager() {
             <th>Ngày diễn ra</th>
             <th>Thời gian</th>
             <th>Giới hạn tham gia</th>
+            <th>Thiết bị mượn</th>
             <th>Người tạo</th>
             <th>Xử lí</th>
           </tr>
@@ -217,6 +216,14 @@ function EventManager() {
                     </a>
                   </td>
                 )}
+                <td>
+                  {item.devices.map((device) => {
+                    return (
+                      <div>{`- ${device.quantity} ${device.device.name}`}</div>
+                    );
+                  })}
+                </td>
+
                 <td>{item.author}</td>
 
                 <td>

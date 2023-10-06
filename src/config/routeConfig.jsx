@@ -15,6 +15,8 @@ import {
   Posts,
   Post,
   UserPostManager,
+  DeviceManager,
+  SponsorManager,
 } from "../pages";
 import routes from "../routes";
 
@@ -28,6 +30,7 @@ const publicRoute = [
   { path: routes.adminLogin, element: <Login></Login> },
   { path: routes.register, element: <Register></Register> },
   { path: routes.registerSeat, element: <RegisterSeat></RegisterSeat> },
+
   {
     path: routes.userEventManager,
     element: <UserEventManager></UserEventManager>,
@@ -41,6 +44,8 @@ const publicRoute = [
 ];
 
 const privateRoute = [
+  { path: routes.devices, element: <DeviceManager></DeviceManager> },
+  { path: routes.sponsors, element: <SponsorManager></SponsorManager> },
   { path: routes.sortSeat, element: <SortSeat></SortSeat> },
   { path: routes.updateGraList, element: <UpdateGraList></UpdateGraList> },
   { path: routes.eventManager, element: <EventManager></EventManager> },

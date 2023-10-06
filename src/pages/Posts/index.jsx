@@ -6,6 +6,8 @@ import Card from "../../components/PostCard";
 import style from "./Posts.scss";
 import { useStore, action } from "../../store";
 import classnames from "classnames/bind";
+import { CKEditor } from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
 const { Content, Sider } = Layout;
 

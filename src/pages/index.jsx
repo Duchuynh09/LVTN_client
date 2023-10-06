@@ -14,3 +14,5 @@ export { default as Profile } from "./Profile";
 export { default as Posts } from "./Posts";
 export { default as Post } from "./Posts/post";
 export { default as UserPostManager } from "./UserPostManager";
+export { default as DeviceManager } from "./DeviceManager";
+export { default as SponsorManager } from "./SponsorManager";

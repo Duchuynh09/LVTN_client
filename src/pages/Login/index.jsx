@@ -7,6 +7,7 @@ import signInApi from "../../api/signInApi";
 import style from "./Login.scss";
 import ModalContext from "../../store/ModalContext";
 import DataContext from "../../store/DataContext";
+import LoginWithGoogle from "../../components/LoginWithGoogle";
 
 const cx = classnames.bind(style);
 
@@ -37,7 +38,6 @@ function Login() {
       var currentDate = new Date();
       // Thêm 30 ngày
       currentDate.setMonth(currentDate.getMonth() + 1);
-
       // Chuyển ngày thành chuỗi ngày tháng hết hạn (GMT)
       var expires = currentDate.toUTCString();
       // Trang login admin mới có param login
@@ -131,12 +131,15 @@ function Login() {
               Đăng nhập
             </Button>
             <p className="text-center m-2">Hoặc</p>
-            <Button
-              variant="outline-primary"
-              className={cx("register", "w-100")}
-            >
-              <Link to={"/register"}>Đăng ký ngay</Link>
-            </Button>
+
+            <div className="d-flex justify-content-evenly">
+              <LoginWithGoogle />
+              <Button variant="outline-primary" className={cx("register")}>
+                <Link to={"/register"}>
+                  <b>Đăng ký ngay</b>
+                </Link>
+              </Button>
+            </div>
           </Form>
         </div>
       </Container>

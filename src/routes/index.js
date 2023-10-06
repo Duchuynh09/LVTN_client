@@ -16,6 +16,8 @@ const routes = {
   feedBack: "/feedBack",
   posts: "/posts",
   post: "/posts/:id",
+  devices: "/devices",
+  sponsors: "/sponsors",
 };
 
 export default routes;

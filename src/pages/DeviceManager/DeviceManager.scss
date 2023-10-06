@@ -1,0 +1,11 @@
+.ant-table-cell {
+  padding: 6.5px !important;
+}
+.ant-form-item-explain-error {
+  position: absolute;
+  z-index: 99;
+  padding: 5px;
+  background-color: #dc3545;
+  border-radius: 10px;
+  color: white !important;
+}

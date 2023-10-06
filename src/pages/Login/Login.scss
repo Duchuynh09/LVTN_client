@@ -14,6 +14,16 @@
     padding: 25px;
     background-color: $third-bg;
   }
+  .register {
+    color: black !important;
+    height: 42px;
+    width: 210px;
+    box-shadow: 0 3px 4px 0 rgba(0, 0, 0, 0.25);
+  }
+  .register:hover {
+    background-color: #4285f4;
+    box-shadow: 0 0 6px #1669f2;
+  }
   .register:hover > * {
     color: $txt-white;
   }

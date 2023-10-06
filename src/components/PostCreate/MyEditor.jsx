@@ -30,46 +30,44 @@ export default function MyEditor({ handleChange, data, modules, readOnly }) {
   }
 
   return (
-    <div className="App">
-      <CKEditor
-        data={data}
-        config={
-          modules
-            ? {
-                toolbar: {
-                  items: [
-                    "alignment",
-                    "heading",
-                    "|",
-                    "bold",
-                    "italic",
-                    "link",
-                    "bulletedList",
-                    "numberedList",
-                    "|",
-                    "outdent",
-                    "indent",
-                    "|",
-                    "imageUpload",
-                    "blockQuote",
-                    "insertTable",
-                  ],
+    <CKEditor
+      data={data}
+      config={
+        modules
+          ? {
+              toolbar: {
+                items: [
+                  "alignment",
+                  "heading",
+                  "|",
+                  "bold",
+                  "italic",
+                  "link",
+                  "bulletedList",
+                  "numberedList",
+                  "|",
+                  "outdent",
+                  "indent",
+                  "|",
+                  "imageUpload",
+                  "blockQuote",
+                  "insertTable",
+                ],
+              },
+              extraPlugins: [uploadPlugin],
+              image: {
+                upload: {
+                  types: ["jpeg", "png"],
                 },
-                extraPlugins: [uploadPlugin],
-                image: {
-                  upload: {
-                    types: ["jpeg", "png"],
-                  },
-                },
-              }
-            : { toolbar: [] }
-        }
-        disabled={readOnly}
-        editor={ClassicEditor}
-        onChange={(e, editor) => {
-          handleChange(editor.getData());
-        }}
-      />
-    </div>
+              },
+            }
+          : { toolbar: [] }
+      }
+      disabled={readOnly}
+      editor={ClassicEditor}
+      onChange={(e, editor) => {
+        handleChange(editor.getData());
+      }}
+    />
   );
 }
