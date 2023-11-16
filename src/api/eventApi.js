@@ -5,6 +5,10 @@ const eventApi = {
     const url = `dssv/dssvCoTheDangKy/${id}`;
     return axiosClientJWT.get(url);
   },
+  getDssvCoTheDangKySpending: (id) => {
+    const url = `dssv/dssvCoTheDangKySpending/${id}`;
+    return axiosClientJWT.get(url);
+  },
   getDssvDaDangKy: (id) => {
     const url = `dssv/dssvDaDangKy/${id}`;
     return axiosClientJWT.get(url);

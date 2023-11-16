@@ -69,6 +69,7 @@ export default function NavTienIch(props) {
   }, [showEmptySeat]);
   return (
     <li
+      key={"tienIch"}
       className={cx("nav__list__item tienIch", {
         activeTienIch: props.currentPage === "/map",
       })}
@@ -117,7 +118,7 @@ export default function NavTienIch(props) {
       >
         <div>
           {props.currentLang === "vi" ? "Tiện ích" : "Convenient"}
-          <BiCaretDown ></BiCaretDown>
+          <BiCaretDown></BiCaretDown>
         </div>
       </TippyHeadless>
     </li>

@@ -49,148 +49,147 @@ const SeatContainer = () => {
   useEffect(() => {
     setData(DataContextt.data);
   }, [DataContextt.data]);
-
   if (data) {
     for (let i = 0; i < DataContextt.data?.length; i++) {
-      if (!isFull(A) && data[i] && !DataContextt.specialSeat.includes("A")) {
+      if (!isFull(A) && data[i] && !DataContextt.specialSeat?.includes("A")) {
         A.push(data[i]);
       } // day nay cho bgk
       else if (
         !isFull(B) &&
         data[i] &&
-        !DataContextt.specialSeat.includes("B")
+        !DataContextt?.specialSeat.includes("B")
       ) {
         B.push(data[i]);
       } else if (
         !isFull(C) &&
         data[i] &&
-        !DataContextt.specialSeat.includes("C")
+        !DataContextt?.specialSeat.includes("C")
       ) {
         C.push(data[i]);
       } else if (
         !isFull(D) &&
         data[i] &&
-        !DataContextt.specialSeat.includes("D")
+        !DataContextt?.specialSeat.includes("D")
       ) {
         D.push(data[i]);
       } else if (
         !isFull(E) &&
         data[i] &&
-        !DataContextt.specialSeat.includes("E")
+        !DataContextt?.specialSeat.includes("E")
       ) {
         E.push(data[i]);
       } else if (
         !isFull(F) &&
         data[i] &&
-        !DataContextt.specialSeat.includes("F")
+        !DataContextt?.specialSeat.includes("F")
       ) {
         F.push(data[i]);
       } else if (
         !isFull(G) &&
         data[i] &&
-        !DataContextt.specialSeat.includes("G")
+        !DataContextt?.specialSeat.includes("G")
       ) {
         G.push(data[i]);
       } else if (
         !isFull(H) &&
         data[i] &&
-        !DataContextt.specialSeat.includes("H")
+        !DataContextt?.specialSeat.includes("H")
       ) {
         H.push(data[i]);
       } else if (
         !isFull(I) &&
         data[i] &&
-        !DataContextt.specialSeat.includes("I")
+        !DataContextt?.specialSeat.includes("I")
       ) {
         I.push(data[i]);
       } else if (
         !isFull(K) &&
         data[i] &&
-        !DataContextt.specialSeat.includes("K")
+        !DataContextt?.specialSeat.includes("K")
       ) {
         K.push(data[i]);
       } else if (
         !isFull(L) &&
         data[i] &&
-        !DataContextt.specialSeat.includes("L")
+        !DataContextt?.specialSeat.includes("L")
       ) {
         L.push(data[i]);
       } else if (
         !isFull(M) &&
         data[i] &&
-        !DataContextt.specialSeat.includes("M")
+        !DataContextt?.specialSeat.includes("M")
       ) {
         M.push(data[i]);
       } else if (
         !isFull(N) &&
         data[i] &&
-        !DataContextt.specialSeat.includes("N")
+        !DataContextt?.specialSeat.includes("N")
       ) {
         N.push(data[i]);
       } else if (
         !isFull(O) &&
         data[i] &&
-        !DataContextt.specialSeat.includes("O")
+        !DataContextt?.specialSeat.includes("O")
       ) {
         O.push(data[i]);
       } else if (
         !isFull(P) &&
         data[i] &&
-        !DataContextt.specialSeat.includes("P")
+        !DataContextt?.specialSeat.includes("P")
       ) {
         P.push(data[i]);
       } else if (
         !isFull(Q) &&
         data[i] &&
-        !DataContextt.specialSeat.includes("Q")
+        !DataContextt?.specialSeat.includes("Q")
       ) {
         Q.push(data[i]);
       } else if (
         !isFull(R) &&
         data[i] &&
-        !DataContextt.specialSeat.includes("R")
+        !DataContextt?.specialSeat.includes("R")
       ) {
         R.push(data[i]);
       } else if (
         !isFull(S) &&
         data[i] &&
-        !DataContextt.specialSeat.includes("S")
+        !DataContextt?.specialSeat.includes("S")
       ) {
         S.push(data[i]);
       } else if (
         !isFull(T) &&
         data[i] &&
-        !DataContextt.specialSeat.includes("T")
+        !DataContextt?.specialSeat.includes("T")
       ) {
         T.push(data[i]);
       } else if (
         !isFull(U) &&
         data[i] &&
-        !DataContextt.specialSeat.includes("U")
+        !DataContextt?.specialSeat.includes("U")
       ) {
         U.push(data[i]);
       } else if (
         !isFull(V) &&
         data[i] &&
-        !DataContextt.specialSeat.includes("V")
+        !DataContextt?.specialSeat.includes("V")
       ) {
         V.push(data[i]);
       } else if (
         !isFull(X) &&
         data[i] &&
-        !DataContextt.specialSeat.includes("X")
+        !DataContextt?.specialSeat.includes("X")
       ) {
         X.push(data[i]);
       } else if (
         !isFull(Y) &&
         data[i] &&
-        !DataContextt.specialSeat.includes("Y")
+        !DataContextt?.specialSeat.includes("Y")
       ) {
         Y.push(data[i]);
       } else if (
         !isFull(Z) &&
         data[i] &&
-        !DataContextt.specialSeat.includes("Z")
+        !DataContextt?.specialSeat.includes("Z")
       ) {
         Z.push(data[i]);
       }

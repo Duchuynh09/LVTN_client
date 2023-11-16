@@ -3,7 +3,7 @@ import SelectDepartment from "../../components/SelectDepartment";
 import { Button, Form, Input } from "antd";
 import DataContext from "../../store/DataContext";
 import ModalConText from "../../store/ModalContext";
-import style from "./Profile.scss?inline";
+import style from "./Profile.scss";
 import classnames from "classnames/bind";
 import userApi from "../../api/userApi";
 const cx = classnames.bind(style);
@@ -90,9 +90,6 @@ const Profile = () => {
     <>
       <Form
         fields={dataForm}
-        onFieldsChange={(_, fields) => {
-          console.log(fields);
-        }}
         className={cx("form-container__main")}
         onFinish={editForm}
         size="middle"
@@ -132,7 +129,7 @@ const Profile = () => {
           }}
         >
           <Button
-            className={cx("register", "w-100", "mt-4", "btn btn-dark")}
+            className={cx("w-100", "mt-4", "btn btn-dark")}
             disabled={false}
             htmlType="submit"
           >

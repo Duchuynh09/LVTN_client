@@ -21,7 +21,7 @@ export function NavSearch(props) {
   //   // props.setSearchVal(e.target.value);
   // };
   return (
-    <div className={cx("nav__search")}>
+    <div className={cx("nav__search")} key={'search'}>
       <input
         type="text"
         className={cx("nav__search__box")}

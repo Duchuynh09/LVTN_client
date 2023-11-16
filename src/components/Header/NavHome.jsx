@@ -1,9 +1,10 @@
 import React from "react";
 import { cx } from ".";
 import { Link } from "react-router-dom";
-function NavHome({ currentPage, currentLang}) {
+function NavHome({ currentPage, currentLang }) {
   return (
     <li
+      key={"home"}
       className={cx("nav__list__item", {
         active: currentPage === "/home",
       })}

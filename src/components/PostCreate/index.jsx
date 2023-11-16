@@ -99,18 +99,20 @@ export default function PostCreate({ idEvent, handleCancel, openModal }) {
               style={{ width: "100%", height: "100%" }}
             />
           ) : (
-            <div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
               <UploadOutlined />
               <div style={{ marginTop: 8 }}>Tải ảnh</div>
             </div>
           )}
         </Upload>
         <hr />
-        <Form.Item
-          style={{
-            color: "black",
-          }}
-        >
+        <Form.Item>
           <Typography>
             <Title style={{ textAlign: "center", marginTop: 10 }} level={3}>
               Nhập thông tin chính của bài viết

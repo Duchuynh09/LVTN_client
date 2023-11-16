@@ -1,17 +1,21 @@
 import { useGoogleLogin } from "@react-oauth/google";
 import "./LoginWithGoogle.scss";
+import axios from "axios";
 export default function LoginWithGoogle() {
-  const login = useGoogleLogin({
-    onSuccess: (credentialResponse) => {
-      console.log(credentialResponse);
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      console.log(tokenResponse);
+      const userInfo = await axios.get(
+        "https://www.googleapis.com/oauth2/v3/userinfo",
+        { headers: { Authorization: `Bearer ${tokenResponse.access_token}` } }
+      );
+
+      console.log(userInfo);
     },
-    onError: () => {
-      console.log("Login Failed");
-    },
-    prompt: "select_account",
+    onError: (errorResponse) => console.log(errorResponse),
   });
   return (
-    <div onClick={() => login()} className="google-btn">
+    <div onClick={() => googleLogin()} className="google-btn">
       <div className="google-icon-wrapper">
         <img
           className="google-icon"

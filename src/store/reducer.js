@@ -1,4 +1,4 @@
-import { FETCH_POSTS, FETCH_POST } from "./constains";
+import { FETCH_POSTS, FETCH_POST,SORT_SAMPLE_DATA } from "./constains";
 export const initState = {
   posts: [],
   post: {},

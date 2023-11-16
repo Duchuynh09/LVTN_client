@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
 import { cx } from ".";
 
-export default function NavLogin({currentPage, currentLang}) {
+export default function NavLogin({ currentPage, currentLang }) {
   return (
     <li
+      key={"login"}
       className={cx("nav__list__item", {
         active: currentPage === "/",
       })}

@@ -2,6 +2,7 @@ import { ConfigProvider, Typography, Button, Form, Table } from "antd";
 import React from "react";
 
 function TableManager({
+  title,
   form,
   loading,
   editingKey,
@@ -27,7 +28,7 @@ function TableManager({
     >
       <main className="wrapper">
         <Typography.Title level={2} className="text-center mt-3">
-          Các thiết bị sẵn có
+          Các {title} sẵn có
         </Typography.Title>
         <Form form={form} component={false}>
           <Button
@@ -38,7 +39,7 @@ function TableManager({
               marginBottom: 16,
             }}
           >
-            Thêm thiết bị
+            Thêm {title}
           </Button>
           <Table
             loading={loading}

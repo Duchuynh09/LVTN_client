@@ -99,14 +99,16 @@ function DeviceManager() {
     await devicesApi.deleteDevice(id);
     getData();
   };
+  function capitalizeFLetter(string = "") {
+    return string[0].toUpperCase() + string.slice(1);
+  }
   const save = async (key) => {
     try {
       const row = await form.validateFields();
       if (key === "newData") {
-        row.label.charAt(0).toUpperCase();
-        console.log(row);
         setLoading(true);
-        console.log(row);
+        row.name = capitalizeFLetter(row.name);
+        row.description = capitalizeFLetter(row.description);
         await devicesApi.createDevice(row);
         setLoading(false);
       } else {
@@ -211,6 +213,7 @@ function DeviceManager() {
 
   return (
     <TableManager
+      title={"thiết bị"}
       EditableCell={EditableCell}
       form={form}
       editingKey={editingKey}

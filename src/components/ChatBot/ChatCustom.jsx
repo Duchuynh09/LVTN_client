@@ -16,30 +16,41 @@ export default function ChatbotWindow() {
 
   function sendMessage() {
     if (newMessage.trim() !== "") {
-      const userMessage = { sender: "user", message: newMessage };
-      setMessages([userMessage, ...messages]);
-      setNewMessage("");
-      handleChatbotResponse(userMessage);
+      if (newMessage === "clear") {
+        setMessages([]);
+        setNewMessage("");
+      } else {
+        const userMessage = { sender: "user", message: newMessage };
+        setMessages([userMessage, ...messages]);
+        setNewMessage("");
+        handleChatbotResponse(userMessage);
+      }
     }
   }
-
+  async function buttonSender(title, payload) {
+    if (title.trim() !== "") {
+      const userMessage = { sender: "user", message: title };
+      setMessages([userMessage, ...messages]);
+      setNewMessage("");
+      handleChatbotResponse({ sender: "user", message: payload });
+    }
+  }
   async function handleChatbotResponse(userMessage) {
     try {
-      const waitRespone = { message: "...", sender: "bot" };
-      setMessages((prevMessages) => [waitRespone, ...prevMessages]);
       const BOTRespone = await chatBotApi.sendMess(JSON.stringify(userMessage));
-      console.log(BOTRespone);
-      // let botMessage = await { message: BOTRespone[0].text, sender: "bot" };
-      // setMessages((prevMessages) => {
-      //   const listMes = [...prevMessages];
-      //   listMes.shift();
-      //   return [botMessage, ...listMes];
-      // });
+      let botMessage = await {
+        buttons: BOTRespone[0].buttons ? [...BOTRespone[0].buttons] : [],
+        message: BOTRespone[0].text,
+        sender: "bot",
+      };
+      setMessages((prevMessages) => {
+        const listMes = [...prevMessages];
+        return [botMessage, ...listMes];
+      });
     } catch (error) {
       console.log(error.message);
     }
   }
-
   function handleInputChange(e) {
     setNewMessage(e.target.value);
   }
@@ -72,19 +83,34 @@ export default function ChatbotWindow() {
         className={`chatbot-window ${isOpen ? "open" : "closed"}`}
       >
         <div className={"chatbot-messages"}>
-          {messages.map(({ message, sender }, index) => (
+          {messages.map(({ message, sender, buttons }, index) => (
             <>
               <div
                 key={index}
                 className={`message ${sender === "user" ? "user" : "bot"}`}
               >
-                <div className="content">{message}</div>
+                <div className="content">
+                  {message}
+                  {buttons
+                    ? buttons.map(({ payload, title }) => {
+                        return (
+                          <Button
+                            className="bg-dark"
+                            onClick={() => buttonSender(title, payload)}
+                          >
+                            {title}
+                          </Button>
+                        );
+                      })
+                    : ""}
+                </div>
               </div>
             </>
           ))}
         </div>
         <div className="message-input">
           <input
+            spellCheck="false"
             type="text"
             value={newMessage}
             onChange={handleInputChange}

@@ -4,6 +4,7 @@ import { cx } from ".";
 export function NavMap(props) {
   return (
     <li
+      key={"map"}
       className={cx("nav__list__item", {
         active: props.currentPage === "/map",
       })}

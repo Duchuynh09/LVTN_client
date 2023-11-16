@@ -6,7 +6,8 @@
   right: 10vw;
   z-index: 99;
   position: fixed;
-  min-width: 300px;
+  width: 300px;
+  max-width: 300px;
   border: 1px solid #ccc;
   border-radius: 8px;
   display: none;
@@ -35,12 +36,16 @@
   margin-right: 50px;
 }
 .content {
+  max-width: 250px;
+  word-wrap: break-word;
   padding: 8px;
   margin: 5px;
   border-radius: 5px;
+  white-space: pre-wrap;
 }
 
 .message.bot .content {
+  // width: 250px;
   background-color: #f0f0f0;
 }
 
@@ -92,7 +97,6 @@ button {
 .btn-send {
   background-color: $main-color;
 }
-
 // .anticon-close {
 //   animation: toggle 0.5;
 // }

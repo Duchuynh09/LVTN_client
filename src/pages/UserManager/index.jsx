@@ -13,6 +13,7 @@ function UserManager() {
 
   // state
   const [users, setUsers] = useState([]);
+  const [notVertify, setNotVertify] = useState([]);
   const [lecturers, setLecturers] = useState([]);
   const [typeManager, setTypeManager] = useState("all");
   const [emailUser, setEmailUser] = useState("");
@@ -21,13 +22,19 @@ function UserManager() {
   const ModalContextt = useContext(ModalContext);
 
   useEffect(() => {
+    const fectAllNotVertify = async () => {
+      const res = await userApi.getAllNotVertify();
+      setNotVertify(res.data);
+    };
+    fectAllNotVertify();
+  }, [loadData]);
+  useEffect(() => {
     const fectAllUser = async () => {
       const res = await userApi.getAllUser();
       setUsers(res.data);
     };
     fectAllUser();
   }, [loadData]);
-
   useEffect(() => {
     const fectAllLecturer = async () => {
       const res = await userApi.getLecturer();
@@ -35,13 +42,22 @@ function UserManager() {
     };
     fectAllLecturer();
   }, [loadData]);
-
   const handleFunction = (email, type) => {
     setEmailUser(email);
     setHandleType(type);
     setShow(true);
   };
+  const deleteAllNotVertify = async () => {
+    const res = await userApi.delAllNotVertify();
+    handleClose();
+    if (res?.message === "success") {
+      setLoadData(!loadData);
 
+      ModalContextt.setMess(`Xóa tài khoản người dùng thành công!`);
+      ModalContextt.setType("success");
+      ModalContextt.setShow(!ModalContextt.show);
+    }
+  };
   const handleUpLevel = async () => {
     const res = await userApi.upLevelUser({ email: emailUser });
     handleClose();
@@ -76,6 +92,7 @@ function UserManager() {
           <option value="all">Tất cả</option>
           <option value="sinhVien">Quản lí tài khoản sinh viên</option>
           <option value="giangVien">Quản lí tài khoản giảng viên</option>
+          <option value="notVertify">Quản lí tài khoản chưa xác thực</option>
         </Form.Select>
       </div>
 
@@ -166,6 +183,53 @@ function UserManager() {
                     <td>{index + 1}</td>
                     <td>{item.email}</td>
                     <td>{item.role === "giangVien" ? "Giảng viên" : ""}</td>
+                    <td>
+                      <Button
+                        className="m-2"
+                        variant="danger"
+                        onClick={() => handleFunction(item.email, "delete")}
+                      >
+                        Xóa người dùng
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </div>
+        )}
+      {notVertify?.length > 0 &&
+        (typeManager === "all" || typeManager === "notVertify") && (
+          <div>
+            <h2 className="text-center">
+              Thông tin các tài khoản chưa xác thực email
+            </h2>
+            <Button
+              className="mb-2"
+              variant="danger"
+              onClick={() => deleteAllNotVertify()}
+            >
+              Xóa tất cả người dùng chưa xác thực
+            </Button>
+            <Table striped bordered hover variant="dark">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Email</th>
+                  <th>Vai trò</th>
+                  <th>Thời gian</th>
+                  <th>Xử lí</th>
+                </tr>
+              </thead>
+              <tbody>
+                {notVertify?.map((item, index) => (
+                  <tr key={index}>
+                    <td>{index + 1}</td>
+                    <td>{item.email}</td>
+                    <td>{item.role === "sinhVien" ? "Sinh viên" : ""}</td>
+                    <td>
+                      {new Date(item.createAt).toLocaleDateString("en-GB")}
+                    </td>
                     <td>
                       <Button
                         className="m-2"

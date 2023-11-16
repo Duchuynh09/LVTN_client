@@ -2,13 +2,17 @@ import { axiosClientJWT } from "./axiosClient";
 import axiosClient from "./axiosClient";
 const userApi = {
   // for user
-  getAllIdUser:()=>{
+  getAllIdUser: () => {
     const url = `user/searchData`;
     return axiosClient.get(url);
   },
   // for ADMIN
   getAllUser: () => {
     const url = `user/getAllUser`;
+    return axiosClientJWT.get(url);
+  },
+  getAllNotVertify: () => {
+    const url = `user/getAllNotVertify`;
     return axiosClientJWT.get(url);
   },
   getOneUser: (payload) => {
@@ -31,6 +35,10 @@ const userApi = {
   delUser: (payload) => {
     const url = `user/delUser`;
     return axiosClientJWT.post(url, payload);
+  },
+  delAllNotVertify: () => {
+    const url = `user/delNotVertify`;
+    return axiosClientJWT.delete(url);
   },
   feedback: (payload) => {
     const url = `user/feedback`;

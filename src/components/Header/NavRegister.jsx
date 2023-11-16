@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
 import { cx } from ".";
 
-function NavRegister({currentPage, currentLang}) {
+function NavRegister({ currentPage, currentLang }) {
   return (
     <li
+      key={"register"}
       className={cx("nav__list__item", {
         active: currentPage === "/register",
       })}
@@ -14,4 +15,4 @@ function NavRegister({currentPage, currentLang}) {
     </li>
   );
 }
-export default NavRegister
+export default NavRegister;

@@ -11,7 +11,7 @@ import "react-chat-elements/dist/main.css";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 const cLientId =
-  "293176661295-u30go0p55kk809hb2l2qmvgpnhlfet3s.apps.googleusercontent.com";
+  "1098297216766-ne44a64vq53snncfrmd0tjshdmr0q2os.apps.googleusercontent.com";
 
 root.render(
   <GoogleOAuthProvider clientId={cLientId}>

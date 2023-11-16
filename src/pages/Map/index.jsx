@@ -10,6 +10,7 @@ import DataContext from "../../store/DataContext";
 import style from "./Map.scss";
 import eventApi from "../../api/eventApi";
 import SeatContainer from "../../components/SeatContainer";
+import { Spin } from "antd";
 
 const cx = classNames.bind(style);
 
@@ -18,22 +19,28 @@ function Map() {
   const SearchContextt = useContext(SearchContext);
   const ModalContextt = useContext(ModalContext);
   let idsv = SearchContextt.idSeat;
-
   const [optionTitle, setOptionTitle] = useState();
   const [indexOpSelect, setIndexOpSelect] = useState(0);
   const [optionData, setOptionData] = useState();
   const [optionState, setOptionState] = useState();
-
   useEffect(() => {
     const fetchOptionEvent = async () => {
       const res = await eventApi.getEvents();
       setOptionData(res.data);
-      if (res.data) DataContextt.setDssvDaDangKy(res?.data[0]?.dsDaDangKy);
       // vua dki xong la cho ngoi se duoc cap nhat ngay
     };
     fetchOptionEvent();
   }, []);
-
+  useEffect(() => {
+    const fetchEventApiById = async () => {
+      if (optionState) {
+        const respone = await eventApi.getDssvDaDangKy(optionState?._id);
+        DataContextt.setData(respone.data);
+      }
+    };
+    fetchEventApiById();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [optionTitle]);
   useEffect(() => {
     if (SearchContextt.isSearch) {
       if (!optionState) {
@@ -98,8 +105,14 @@ function Map() {
 
       SearchContextt.setIsSearch(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [SearchContextt.isSearch]);
-
+  useEffect(() => {
+    if (!optionTitle) {
+      DataContextt.setData([]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [optionTitle]);
   const handleSelectOption = (item, index) => {
     if (JSON.parse(localStorage.getItem("tienIch"))) {
       ModalContextt.setShow(true);
@@ -112,7 +125,6 @@ function Map() {
       DataContextt.setIdEvent(item._id);
     }
   };
-
   return (
     <div className="wrapper">
       <h2 className="mt-5 text-center">SƠ ĐỒ HỘI TRƯỜNG RÙA</h2>
@@ -121,17 +133,11 @@ function Map() {
           as={ButtonGroup}
           id={`dropdown-variants-Secondary`}
           variant={"secondary"}
-          title={
-            optionTitle ||
-            (optionData &&
-              (optionData[0]?.name || '') +
-                ` ( ${optionData[0]?.time || 'Hiện tại chưa có sự kiện'} ${optionData[0]?.date || ''} )`) || '' 
-          }
+          title={optionTitle || "Chọn sự kiện"}
         >
           {optionData?.map((item, index) => {
             if (index === indexOpSelect) {
               return (
-
                 <Dropdown.Item
                   key={item._id}
                   active
@@ -153,7 +159,6 @@ function Map() {
           })}
         </DropdownButton>
       </div>
-
       <SeatContainer></SeatContainer>
       <div className={cx("map-mobile")}>
         <img

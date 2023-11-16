@@ -171,6 +171,7 @@ function SponsorManager() {
 
   return (
     <TableManager
+      title={"nhà tài trợ"}
       EditableCell={EditableCell}
       form={form}
       editingKey={editingKey}

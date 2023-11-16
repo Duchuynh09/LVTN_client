@@ -6,8 +6,8 @@ const cx = classNames.bind(style);
 
 function SeatList({ Array, nameArray = "" }) {
   const tmpArray = [];
-
   for (let index = 0; index < Array[0]; index++) {
+    // Nếu tồn tại vị trí số 2 Array[1]
     if (Array[index + 1]) {
       tmpArray.push(Array[index + 1].mssv);
     } else {

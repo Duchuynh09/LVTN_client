@@ -64,7 +64,7 @@ function RegisterSeat() {
           } else {
             let dataClient = {
               mssv: data.mssv.toUpperCase(),
-              email: user.email,
+              email: user.isAdmin ? data.email : user.email,
               ten: data.name,
               lop: data.class.toUpperCase(),
               nghanh: data.major.toUpperCase(),
@@ -73,32 +73,35 @@ function RegisterSeat() {
             };
 
             DataContextt.setClientData(dataClient); // dua du lieu len store de goi api va tao
-            DataContextt.setCallApi(!DataContextt.callApi);
 
             setOptionTitle(null);
             setIndexOpSelect(null);
             setOptionState(null);
             DataContextt.setIdEvent(null);
+            if (DataContextt.dataClient) {
+              ModalConTextt.setShow(true);
+              ModalConTextt.setMess("Đăng kí tham dự sự kiện thành công!");
+              ModalConTextt.setType("success");
+              const emailPayload = {
+                email: user.email,
+                subject: "Thông báo đăng ký tham gia sự kiện",
+                content: `Chúc mừng bạn đã đăng ký tham gia sự kiện "${optionTitle}" thành công!`,
+              };
 
-            ModalConTextt.setShow(true);
-            ModalConTextt.setMess("Đăng kí tham dự sự kiện thành công!");
-            ModalConTextt.setType("success");
+              const sendMai = async () => {
+                try {
+                  await sendMailApi.sendMail(emailPayload);
+                } catch (error) {
+                  console.log(error.message);
+                }
+              };
 
-            const emailPayload = {
-              email: user.email,
-              subject: "Thông báo đăng ký tham gia sự kiện",
-              content: `Chúc mừng bạn đã đăng ký tham gia sự kiện "${optionTitle}" thành công!`,
-            };
-
-            const sendMai = async () => {
-              try {
-                await sendMailApi.sendMail(emailPayload);
-              } catch (error) {
-                console.log(error);
-              }
-            };
-
-            // sendMai();
+              // sendMai();
+            } else {
+              ModalConTextt.setShow(true);
+              ModalConTextt.setMess("Đăng kí tham dự sự kiện thất bại!");
+              ModalConTextt.setType("danger");
+            }
           }
         }
       } else {
@@ -154,11 +157,7 @@ function RegisterSeat() {
                 handleSelectOption(item, index)
               }
             />
-            <Button
-              variant="outline-primary"
-              type="submit"
-              className={cx("register", "w-100", "mt-4")}
-            >
+            <Button type="submit" className={cx("register", "w-100", "mt-4")}>
               Xác nhận
             </Button>
           </Form>

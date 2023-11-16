@@ -1,4 +1,4 @@
-@use "../../scss/" as *;
+@use "../../../scss/" as *;
 
 .form-container {
   @include flex(center, center);
@@ -18,10 +18,9 @@
         width: 100%;
         outline: none;
         margin: 10px 0;
-
       }
       p {
-          margin: unset;
+        margin: unset;
         text-align: left;
         color: red;
         line-height: 18px;

@@ -11,10 +11,9 @@ function DataProvider({ children }) {
   const [idEvent, setIdEvent] = useState();
   const [specialSeat, setSpecialSeat] = useState([]);
 
-  const [isAdmin,setIsAdmin] = useState(false)
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const checkMssv = (mssv) => {
-    // console.log(dssvCoTheDangKy);
     if (dssvCoTheDangKy !== "all") {
       let isSuccess = dssvCoTheDangKy?.find((item) => {
         return item.mssv.toUpperCase() === mssv.toUpperCase();
@@ -38,7 +37,6 @@ function DataProvider({ children }) {
     const fetchEventApi = async () => {
       const respone = await eventApi.getDssvCoTheDangKy(idEvent);
       const respone2 = await eventApi.getDssvDaDangKy(idEvent);
-
       setDssvCoTheDangKy(respone.data);
       setDssvDaDangKy(respone2.data);
       setSpecialSeat(respone2.specialSeat);
@@ -47,17 +45,17 @@ function DataProvider({ children }) {
     fetchEventApi();
   }, [idEvent]);
 
-  useEffect(() => {
-    const fetchEventApi = async () => {
-      const respone = await eventApi.getEvents();
-      // lay ds sv dang ky cua su kien dau tien de hien thi dau tien
-      if (respone.data) {
-        setData(respone?.data[0]?.dsDaDangKy);
-        setSpecialSeat(respone.data[0].specialSeat);
-      }
-    };
-    fetchEventApi();
-  }, [callApi]);
+  // useEffect(() => {
+  //   const fetchEventApi = async () => {
+  //     const respone = await eventApi.getEvents();
+  //     // lay ds sv dang ky cua su kien dau tien de hien thi dau tien
+  //     if (respone.data) {
+  //       setData(respone?.data[0]?.dsDaDangKy);
+  //       setSpecialSeat(respone.data[0]?.specialSeat);
+  //     }
+  //   };
+  //   fetchEventApi();
+  // }, [callApi]);
 
   // user gui info để đki tham gia skien
   useEffect(() => {
@@ -76,6 +74,7 @@ function DataProvider({ children }) {
   return (
     <DataContext.Provider
       value={{
+        clientData,
         data,
         checkAlready,
         setDssvDaDangKy,
@@ -87,7 +86,9 @@ function DataProvider({ children }) {
         callApi,
         idEvent,
         setIdEvent,
-        specialSeat,isAdmin,setIsAdmin
+        specialSeat,
+        isAdmin,
+        setIsAdmin,
       }}
     >
       {children}

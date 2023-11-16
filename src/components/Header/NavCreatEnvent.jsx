@@ -4,6 +4,7 @@ import { cx } from ".";
 export function NavCreatEnvent(props) {
   return (
     <li
+      key={"createEvent"}
       className={cx("nav__list__item", {
         active: props.currentPage === "/createEvent",
       })}

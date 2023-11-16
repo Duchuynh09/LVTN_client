@@ -3,11 +3,11 @@ import { Link, useLocation } from "react-router-dom";
 import { useParams, useNavigate } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import classnames from "classnames/bind";
-import signInApi from "../../api/signInApi";
+import signInApi from "../../../api/signInApi";
 import style from "./Login.scss";
-import ModalContext from "../../store/ModalContext";
-import DataContext from "../../store/DataContext";
-import LoginWithGoogle from "../../components/LoginWithGoogle";
+import ModalContext from "../../../store/ModalContext";
+import DataContext from "../../../store/DataContext";
+import LoginWithGoogle from "../../../components/LoginWithGoogle";
 
 const cx = classnames.bind(style);
 
@@ -47,8 +47,8 @@ function Login() {
             email,
             password,
           });
-          const { id, ...info } = check.user;
           if (check.state === "success") {
+            const { id, ...info } = check.user;
             localStorage.setItem("user", JSON.stringify({ ...info }));
             localStorage.setItem("token", JSON.stringify(check.token));
             document.cookie = `token = ${JSON.stringify(
@@ -76,8 +76,8 @@ function Login() {
           email,
           password,
         });
-        const { id, ...info } = check.user;
         if (check.state === "success") {
+          const { id, ...info } = check.user;
           localStorage.setItem("user", JSON.stringify({ ...info }));
           document.cookie = `token = ${JSON.stringify(check.token)}`;
           document.cookie = `token = ${JSON.stringify(
@@ -134,7 +134,7 @@ function Login() {
 
             <div className="d-flex justify-content-evenly">
               <LoginWithGoogle />
-              <Button variant="outline-primary" className={cx("register")}>
+              <Button className={cx("register")}>
                 <Link to={"/register"}>
                   <b>Đăng ký ngay</b>
                 </Link>

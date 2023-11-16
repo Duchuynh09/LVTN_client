@@ -6,7 +6,7 @@ import "./DefaultLayout.scss";
 import ChatBot from "../../components/ChatBot/ChatCustom";
 import { useCallback, useEffect, useLayoutEffect, useState } from "react";
 import { useParams, useLocation } from "react-router-dom";
-
+import { Button } from "react-bootstrap";
 function DefaultLayout({ children }) {
   const param = useParams();
   const location = useLocation();
@@ -53,6 +53,7 @@ function DefaultLayout({ children }) {
       </div>
       <div className="main_wrapper">{children}</div>
       <div className="footer_wrapper">
+
         <Footer></Footer>
       </div>
       <ChatBot />

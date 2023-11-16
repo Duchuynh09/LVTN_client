@@ -15,6 +15,7 @@ html {
   font-size: 13px;
 
   @include mobile {
+    width: 100vw;
     font-size: 11px;
   }
 }
@@ -47,9 +48,12 @@ button {
 .wrapper {
   padding: 0 70px;
   box-shadow: $box-shadow;
-  // @include tablet {
-  //    padding: 0 30px;
-  // }
+  @include tablet {
+    padding: 0 30px;
+  }
+  @include mobile {
+    padding: 0 0;
+  }
 }
 
 .wrapper > .ant-layout {

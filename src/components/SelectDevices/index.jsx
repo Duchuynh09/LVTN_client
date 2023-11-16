@@ -1,8 +1,12 @@
 import { InputNumber, List, Select, Typography, message } from "antd";
-function SelectDevices(
-  { selected, handleChange, options, isDevice = true, title },
-  props
-) {
+function SelectDevices({
+  selected,
+  handleChange,
+  options,
+  isDevice = true,
+  title,
+  ...props
+}) {
   return (
     <>
       <Typography.Text>Chọn {title} (nếu có)</Typography.Text>
@@ -18,7 +22,7 @@ function SelectDevices(
         style={{
           width: "100%",
         }}
-        onChange={(item) => handleChange(item)}
+        onChange={(name) => handleChange(name)}
         options={options.filter((o) => {
           return !selected.includes(o.label);
         })}
@@ -42,15 +46,16 @@ function SelectDevices(
               >
                 {item.label}
                 <InputNumber
+                  min={1}
+                  max={item.max}
                   defaultValue={item.quantity}
                   onChange={(value) => {
-                    if (value <= item.max)
-                      props.changeQuantity(item.key, value);
-                    else
+                    if (value > item.max) {
                       message.error({
                         content: `Số lượng không đủ < ${item.max + 1}`,
                         duration: 0.8,
                       });
+                    } else props.changeQuantity(item.key, value);
                   }}
                 />
               </List.Item>

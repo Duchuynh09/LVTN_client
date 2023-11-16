@@ -6,9 +6,7 @@ import eventApi from "../../api/eventApi";
 
 function EventSelection({ handleSelectOption, optionTitle, indexOpSelect }) {
   const [optionData, setOptionData] = useState();
-  const hanleOnchange = (e) => {
-    console.log(e);
-  };
+
   useEffect(() => {
     const fetchOptionEvent = async () => {
       const res = await eventApi.getEvents();
@@ -24,7 +22,6 @@ function EventSelection({ handleSelectOption, optionTitle, indexOpSelect }) {
       variant={"dark"}
       title={optionTitle || "Chọn sự kiện"}
       className="w-100"
-      onChange={hanleOnchange}
     >
       {optionData?.map((item, index) => {
         if (index === indexOpSelect) {
@@ -34,7 +31,6 @@ function EventSelection({ handleSelectOption, optionTitle, indexOpSelect }) {
               active
               onClick={() => {
                 handleSelectOption(item, index);
-                hanleOnchange(item);
               }}
             >
               {item.name + " ( " + item.time + " " + item.date + " ) "}
@@ -46,7 +42,6 @@ function EventSelection({ handleSelectOption, optionTitle, indexOpSelect }) {
               key={item._id}
               onClick={() => {
                 handleSelectOption(item, index);
-                hanleOnchange(item);
               }}
             >
               {item.name + " ( " + item.time + " " + item.date + " ) "}

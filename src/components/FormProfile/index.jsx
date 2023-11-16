@@ -37,24 +37,31 @@ function FormProfile({ user, register, errors }, ref) {
           )}
         </FloatingLabel>
       </Form.Group>
-      {/* <Form.Group className="mb-3" controlId="formBasicEmail">
-                <Form.Control
-                  type="text"
-                  name="email"
-                  placeholder="Email"
-                  spellCheck={false}
-                  {...register("email", {
-                    required: true,
-                    pattern: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                  })}
-                />
-                {errors.email?.type === "required" && (
-                  <p className="text-danger">Vui lòng nhập email</p>
-                )}
-                {errors.email?.type === "pattern" && (
-                  <p className="text-danger">Vui lòng kiểm tra lại email</p>
-                )}
-              </Form.Group> */}
+      {user.isAdmin && (
+        <Form.Group className="mb-3" controlId="formBasicEmail">
+          <FloatingLabel
+            controlId="floatingInput"
+            label="Email"
+            className="mb-3"
+          >
+            <Form.Control
+              type="text"
+              name="email"
+              spellCheck={false}
+              {...register("email", {
+                required: true,
+                pattern: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+              })}
+            />
+            {errors.email?.type === "required" && (
+              <p className="text-danger">Vui lòng nhập email</p>
+            )}
+            {errors.email?.type === "pattern" && (
+              <p className="text-danger">Vui lòng kiểm tra lại email</p>
+            )}
+          </FloatingLabel>
+        </Form.Group>
+      )}
       <Form.Group className="mb-3" controlId="formBasicClass">
         <FloatingLabel
           controlId="floatingInput"

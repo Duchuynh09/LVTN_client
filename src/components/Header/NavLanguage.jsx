@@ -6,6 +6,7 @@ import { cx } from ".";
 export function NavLanguage(props) {
   return (
     <div
+    key={'langue'}
       className={cx("nav__list__item language")}
       onClick={() => props.setShowLang(!props.showLang)}
     >

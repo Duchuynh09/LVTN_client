@@ -8,11 +8,16 @@ import {
   DropdownButton,
   Modal,
   Form,
+  OverlayTrigger,
+  Tooltip,
 } from "react-bootstrap";
+import { BiTable } from "react-icons/bi";
 import eventApi from "../../api/eventApi";
 import sendMailApi from "../../api/sendMailApi";
 import style from "./EventManager.scss";
-
+import { exportFile } from "../../services/handleFileExcel.js";
+import PreViewModal from "../../components/PreviewList";
+import { message } from "antd";
 const cx = classnames.bind(style);
 
 function EventManager() {
@@ -29,8 +34,11 @@ function EventManager() {
   const [optionTitle, setOptionTitle] = useState();
   const [optionShow, setOptionShow] = useState("DXL");
   const [idEvent, setIdEvent] = useState("");
+  const [preview, setPreview] = useState(false);
   const yearList = useRef();
-
+  const [previewProps, setPreviewProps] = useState({
+    users: [],
+  });
   const user = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
@@ -74,6 +82,24 @@ function EventManager() {
       }
     };
     createEvt();
+  };
+  const hanldePreviewDsCoTheDangKy = (item) => {
+    setPreviewProps({
+      users: item.dsCoTheDangKy,
+    });
+  };
+  const hanldePreviewDsCoTheDangKySPending = async (item) => {
+    const res2 = await eventApi.getDssvCoTheDangKySpending(item._id);
+    if (res2.state === "success") handleClose();
+    setPreviewProps({
+      users: res2.data,
+    });
+  };
+  const handlePreviewExport = (item) => {
+    setPreviewProps({
+      users: item.dsDaDangKy,
+      handleExport: handleExport,
+    });
   };
   const handleNoAccept = (idEvent) => {
     const deletePendingEvent = async () => {
@@ -122,23 +148,25 @@ function EventManager() {
       setOptionShow("CXL");
     }
   };
-
-  const handleCreateFile = (id, year) => {
+  function handleExport(dsDaDangKy) {
+    exportFile(dsDaDangKy);
+  }
+  const handleCreateFile = (id, year = 2023) => {
     const handleApi = async () => {
-      const payload = {
-        idEvent: id,
-      };
       const payload2 = {
         idEvent: id,
         date: year,
       };
-      const res = await eventApi.generateFile(payload);
-      if (res.state === "success") {
-        const res2 = await eventApi.addDataCTDK(payload2);
-        console.log(res2);
-      }
+      const res2 = await eventApi.addDataCTDK(payload2);
+      if (res2.state === "success") handleClose();
+    };
+    const fetchEvents = async () => {
+      const res = await eventApi.getEvents();
+      setDataEvent(res.data);
+      message.success("Duyệt danh sách thành công");
     };
     handleApi();
+    fetchEvents();
   };
 
   return (
@@ -192,9 +220,9 @@ function EventManager() {
             <th>Tên sự kiện</th>
             <th>Ngày diễn ra</th>
             <th>Thời gian</th>
-            <th>Giới hạn tham gia</th>
             <th>Thiết bị mượn</th>
             <th>Người tạo</th>
+            <th>Giới hạn tham gia</th>
             <th>Xử lí</th>
           </tr>
         </thead>
@@ -206,16 +234,6 @@ function EventManager() {
                 <td>{item.name}</td>
                 <td>{item.date}</td>
                 <td>{item.time}</td>
-
-                {item.limit === "all" ? (
-                  <td>{item.limit}</td>
-                ) : (
-                  <td>
-                    <a target={"_blank"} href={item.limit} rel="noreferrer">
-                      {item.limit}
-                    </a>
-                  </td>
-                )}
                 <td>
                   {item.devices.map((device) => {
                     return (
@@ -225,7 +243,57 @@ function EventManager() {
                 </td>
 
                 <td>{item.author}</td>
+                {item.limit === "all" ? (
+                  <td>{item.limit}</td>
+                ) : (
+                  <td>
+                    {item.dsCoTheDangKy.length > 0
+                      ? item.limit + " người"
+                      : "Chưa duyệt danh sách"}
+                    {optionShow === "DXL" && (
+                      <>
+                        <PreViewModal
+                          open={preview}
+                          onCancel={() => setPreview(false)}
+                          {...previewProps}
+                        />
 
+                        <OverlayTrigger
+                          placement="top"
+                          overlay={
+                            <Tooltip id="tooltip">
+                              <strong>Xem danh sách</strong>
+                            </Tooltip>
+                          }
+                        >
+                          {item.dsCoTheDangKy.length === 0 ? (
+                            <Button
+                              className="m-2"
+                              onClick={() => {
+                                hanldePreviewDsCoTheDangKySPending(item);
+                                setPreview(true);
+                              }}
+                              disabled={!item.dsCoTheDangKy}
+                            >
+                              Xem trước
+                            </Button>
+                          ) : (
+                            <Button
+                              className="m-2"
+                              onClick={() => {
+                                hanldePreviewDsCoTheDangKy(item);
+                                setPreview(true);
+                              }}
+                              disabled={!item.dsCoTheDangKy}
+                            >
+                              <BiTable></BiTable>
+                            </Button>
+                          )}
+                        </OverlayTrigger>
+                      </>
+                    )}
+                  </td>
+                )}
                 <td>
                   {optionShow === "CXL" && (
                     <Button
@@ -238,20 +306,33 @@ function EventManager() {
                   )}
                   {optionShow === "DXL" && (
                     <Button
+                      variant="secondary"
+                      onClick={() => {
+                        handlePreviewExport(item);
+                        setPreview(true);
+                      }}
+                    >
+                      Xuất file người tham gia
+                    </Button>
+                  )}
+                  {optionShow === "DXL" && (
+                    <Button
                       className="m-2"
                       disabled={
                         item.limit === "all" ||
                         item.dsCoTheDangKy[0] !== undefined
                       }
                       variant="primary"
-                      onClick={() => handleShow(item._id)}
+                      onClick={() => {
+                        handleCreateFile(item._id);
+                      }}
                     >
                       Duyệt danh sách
                     </Button>
                   )}
-
                   <Button
-                    variant="secondary"
+                    className="ms-2"
+                    variant="danger"
                     onClick={() => handleNoAccept(item._id)}
                   >
                     Xóa
